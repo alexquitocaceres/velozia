@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta de Consultoría JCI 8ª Edición | Velozia - Hospital SOLCA</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        velozia: {
+                            blue: '#003366',
+                            darkblue: '#001F3F',
+                            lightblue: '#0052CC',
+                            softblue: '#EBF3FF',
+                            green: '#00A86B',
+                            lightgreen: '#10B981',
+                            softgreen: '#E6F8F1',
+                            graybg: '#F8FAFC',
+                            accent: '#00C853'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            scroll-behavior: smooth;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        .gradient-velozia {
+            background: linear-gradient(135deg, #001F3F 0%, #003366 50%, #0052CC 100%);
+        }
+        
+        .gradient-green {
+            background: linear-gradient(135deg, #00A86B 0%, #10B981 100%);
+        }
+
+        .gradient-light-bg {
+            background: linear-gradient(180deg, #EBF3FF 0%, #F8FAFC 100%);
+        }
+        
+        /* Reglas para impresión limpia a PDF */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .shadow-xl, .shadow-md, .shadow-lg {
+                box-shadow: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-800">
+
+    <!-- BARRA SUPERIOR / NAVEGACIÓN CORPORATIVA VELOZIA -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo Corporativo Velozia -->
+            <div class="flex items-center space-x-3">
+                <img src="https://res.cloudinary.com/dgdvr53zp/image/upload/v1782710603/Gemini_Generated_Image_dzrmo0dzrmo0dzrm_xl7x5a.png" alt="Velozia Logo" class="h-10 sm:h-12 w-auto object-contain rounded">
+                <div class="hidden sm:block border-l border-slate-300 pl-3">
+                    <span class="text-xs uppercase tracking-wider font-bold text-velozia-blue block">Consultoría Hospitalaria</span>
+                    <span class="text-xs text-slate-500">Excelencia & Acreditación JCI</span>
+                </div>
+            </div>
+
+            <!-- Menú de Navegación Rápida -->
+            <nav class="hidden md:flex space-x-6 text-sm font-semibold text-slate-600">
+                <a href="#resumen" class="hover:text-velozia-lightblue transition-colors">Resumen</a>
+                <a href="#antecedentes" class="hover:text-velozia-lightblue transition-colors">Enfoque SOLCA</a>
+                <a href="#metodologia" class="hover:text-velozia-lightblue transition-colors">Metodología</a>
+                <a href="#demo-digital" class="hover:text-velozia-green transition-colors flex items-center gap-1 text-velozia-blue">
+                    <i class="fa-solid fa-laptop-code text-velozia-green"></i> Checklist Digital
+                </a>
+                <a href="#cronograma" class="hover:text-velozia-lightblue transition-colors">Cronograma</a>
+                <a href="#entregables" class="hover:text-velozia-lightblue transition-colors">Entregables</a>
+            </nav>
+
+            <!-- Acciones de Cabecera -->
+            <div class="flex items-center space-x-3">
+                <button onclick="window.print()" class="px-3 py-2 text-xs font-semibold text-velozia-blue bg-velozia-softblue rounded-lg hover:bg-blue-100 transition flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> PDF
+                </button>
+                <a href="#aprobacion" class="px-3 sm:px-4 py-2 text-xs font-bold text-white bg-velozia-green rounded-lg hover:bg-emerald-600 shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Aprobar Propuesta
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- BANNER HERO / PORTADA DE LA PROPUESTA -->
+    <section class="gradient-velozia text-white py-12 sm:py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 w-96 h-96 bg-velozia-green/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute left-1/3 bottom-0 w-80 h-80 bg-blue-400/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-12">
+                <div class="lg:w-2/3 space-y-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 text-emerald-300 text-xs font-semibold backdrop-blur-md border border-white/20">
+                        <i class="fa-solid fa-shield-halved text-velozia-green"></i> Acompañamiento Estratégico Pre-Auditoría
+                    </div>
+                    
+                    <!-- Título ajustado con salto de línea limpio para móvil y escritorio -->
+                    <h1 class="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-snug sm:leading-tight">
+                        Auditoría Operativa y Checklist Digital para la Acreditación JCI
+                        <span class="block mt-2 text-emerald-400 font-extrabold text-xl sm:text-3xl lg:text-4xl">
+                            (8.ª Edición)
+                        </span>
+                    </h1>
+                    
+                    <p class="text-sm sm:text-base lg:text-lg text-slate-200 font-normal leading-relaxed max-w-3xl">
+                        Servicio de consultoría especializada para el <strong class="text-white">Hospital SOLCA</strong>. Un modelo de diagnóstico ágil, sin carga burocrática excesiva, enfocado en blindar los procesos clínicos de alto riesgo pre-visita de noviembre.
+                    </p>
+
+                    <div class="pt-2 flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-medium text-slate-300">
+                        <div class="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-lg border border-white/10">
+                            <i class="fa-solid fa-hospital text-emerald-400"></i> Cliente: Hospital SOLCA
+                        </div>
+                        <div class="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-lg border border-white/10">
+                            <i class="fa-solid fa-calendar-check text-emerald-400"></i> Hito: Auditoría Noviembre
+                        </div>
+                        <div class="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-lg border border-white/10">
+                            <i class="fa-solid fa-envelope text-emerald-400"></i> contacto@velozia.cloud
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Destacada de Objetivo -->
+                <div class="lg:w-1/3 w-full">
+                    <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 shadow-2xl text-white space-y-4">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                            <span class="text-xs uppercase tracking-wider text-slate-300 font-bold">Estado de Preparación</span>
+                            <span class="px-2.5 py-1 bg-emerald-500/30 text-emerald-300 text-xs font-bold rounded-full border border-emerald-400/30">
+                                Meta: Noviembre
+                            </span>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between text-xs sm:text-sm">
+                                <span class="text-slate-300">Estándar Aplicable:</span>
+                                <span class="font-bold text-white">JCI Hospitales 8ª Ed.</span>
+                            </div>
+                            <div class="flex justify-between text-xs sm:text-sm">
+                                <span class="text-slate-300">Metodología:</span>
+                                <span class="font-bold text-emerald-300">Patient Tracers + SAFER</span>
+                            </div>
+                            <div class="flex justify-between text-xs sm:text-sm">
+                                <span class="text-slate-300">Herramienta:</span>
+                                <span class="font-bold text-white">Checklist Digital Velozia</span>
+                            </div>
+                        </div>
+                        <div class="pt-2">
+                            <a href="#demo-digital" class="w-full py-3 bg-velozia-green hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg transition text-center block">
+                                <i class="fa-solid fa-bolt mr-2"></i> Probar Simulador Digital
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TARJETAS DE MÉTRICAS Y VALOR CLAVE -->
+    <section id="resumen" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-card p-5 rounded-xl shadow-md border-l-4 border-velozia-blue flex items-center space-x-4">
+                <div class="p-3 bg-velozia-softblue text-velozia-blue rounded-lg">
+                    <i class="fa-solid fa-square-check text-2xl"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-extrabold text-slate-800 block">100%</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Mapeo de MEs Críticos</span>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-xl shadow-md border-l-4 border-velozia-green flex items-center space-x-4">
+                <div class="p-3 bg-velozia-softgreen text-velozia-green rounded-lg">
+                    <i class="fa-solid fa-shield-virus text-2xl"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-extrabold text-slate-800 block">SAFER</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Matriz Oficial JCI</span>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-xl shadow-md border-l-4 border-velozia-blue flex items-center space-x-4">
+                <div class="p-3 bg-velozia-softblue text-velozia-lightblue rounded-lg">
+                    <i class="fa-solid fa-mobile-screen-button text-2xl"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-extrabold text-slate-800 block">Digital</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Reporte en Tiempo Real</span>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-xl shadow-md border-l-4 border-amber-500 flex items-center space-x-4">
+                <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
+                    <i class="fa-solid fa-clock-rotate-left text-2xl"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-extrabold text-slate-800 block">SIP 60d</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Plan Remedial Inmediato</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 1: ENFOQUE ESPECIALIZADO SOLCA Y DESAFÍO JCI 8ª EDICIÓN -->
+    <section id="antecedentes" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="text-xs font-bold uppercase tracking-widest text-velozia-green bg-velozia-softgreen px-3 py-1 rounded-full">
+                Diagnóstico Estratégico
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-velozia-darkblue mt-3">
+                ¿Por qué un Acompañamiento Focalizado para SOLCA?
+            </h2>
+            <p class="text-slate-600 text-sm mt-3 leading-relaxed">
+                Al ser el centro oncológico de referencia del país, SOLCA maneja procesos de máximo riesgo clínico. La **8.ª Edición de la JCI** exige demostrar la adhesión práctica diaria del personal de primera línea, no solo carpetas con normativas escritas.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+            <!-- Columna Izquierda: Puntos de Dolor Oncológicos -->
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center space-x-3 text-velozia-blue mb-4">
+                        <i class="fa-solid fa-notes-medical text-2xl text-velozia-green"></i>
+                        <h3 class="text-xl font-bold text-slate-800">Áreas de Riesgo Crítico en SOLCA</h3>
+                    </div>
+                    <ul class="space-y-4 text-sm text-slate-600">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-exclamation text-amber-500 mt-1"></i>
+                            <div>
+                                <strong class="text-slate-800 block">MMU - Manejo de Citostáticos y Medicamentos de Alto Riesgo:</strong>
+                                Preparación en central de mezclas, etiquetado doble, conciliación medicamentosa y almacenamiento con controles estrictos.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-exclamation text-amber-500 mt-1"></i>
+                            <div>
+                                <strong class="text-slate-800 block">IPSG - Identificación y Comunicación en Traspasos:</strong>
+                                Pacientes inmunodeprimidos, doble verificación pre-infusión de quimioterapia y notificación de valores críticos de laboratorio.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-exclamation text-amber-500 mt-1"></i>
+                            <div>
+                                <strong class="text-slate-800 block">PCI - Control de Infecciones y Aislamiento Neutropénico:</strong>
+                                Flujos de esterilización, limpieza hospitalaria especializada y protección del paciente neutropénico.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-exclamation text-amber-500 mt-1"></i>
+                            <div>
+                                <strong class="text-slate-800 block">FMS - Bioseguridad Radiológica e Instalaciones:</strong>
+                                Mantenimiento preventivo de aceleradores lineales, cabinas de flujo laminar y calidad del agua para tratamientos.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-100 bg-slate-50 -mx-6 -mb-6 p-6 rounded-b-2xl">
+                    <p class="text-xs text-slate-500 italic">
+                        <i class="fa-solid fa-lightbulb text-velozia-green mr-1"></i>
+                        <strong>Cambio en JCI 8ª Edición:</strong> La norma redujo un ~10-15% la duplicidad de estándares, pero conceptualizó con mayor rigor la verificación directa en el campo de atención.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: El Valor de la Solución Velozia -->
+            <div class="gradient-light-bg p-6 sm:p-8 rounded-2xl border border-blue-100 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center space-x-3 text-velozia-blue mb-4">
+                        <i class="fa-solid fa-rocket text-2xl text-velozia-lightblue"></i>
+                        <h3 class="text-xl font-bold text-velozia-darkblue">Nuestra Propuesta de Valor</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                            <h4 class="font-bold text-sm text-velozia-blue flex items-center gap-2">
+                                <i class="fa-solid fa-check-circle text-velozia-green"></i> Mock Survey In Situ Sin Fricción
+                            </h4>
+                            <p class="text-xs text-slate-600 mt-1">
+                                Ensayos reales de auditoría utilizando rastreadores (*Patient Tracers*) sin interferir con las atenciones médicas diarias.
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                            <h4 class="font-bold text-sm text-velozia-blue flex items-center gap-2">
+                                <i class="fa-solid fa-check-circle text-velozia-green"></i> Checklist Digital Velozia
+                            </h4>
+                            <p class="text-xs text-slate-600 mt-1">
+                                Reemplaza tabulaciones lentas en papel/Excel. La Gerencia de SOLCA visualiza brechas consolidadas el mismo día de la revisión.
+                            </p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                            <h4 class="font-bold text-sm text-velozia-blue flex items-center gap-2">
+                                <i class="fa-solid fa-check-circle text-velozia-green"></i> Matriz SAFER de Riesgo Clínico
+                            </h4>
+                            <p class="text-xs text-slate-600 mt-1">
+                                Priorización automática de recursos hacia los hallazgos con alta probabilidad de daño o alcance generalizado.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-blue-200 text-center">
+                    <span class="text-xs font-bold text-velozia-blue uppercase tracking-wider">
+                        Objetivo Directo: Garantizar el Dictamen Re-Acreditado en Noviembre
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 2: METODOLOGÍA VELOZIA EN 4 FASES -->
+    <section id="metodologia" class="py-16 bg-white border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-xs font-bold uppercase tracking-widest text-velozia-blue bg-velozia-softblue px-3 py-1 rounded-full">
+                    Metodología Proactiva
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-velozia-darkblue mt-3">
+                    Metodología de Acompañamiento en 4 Fases
+                </h2>
+                <p class="text-slate-600 text-sm mt-3">
+                    Un camino estructurado y continuo para corregir desviaciones operativas antes de la llegada de los auditores externos JCI.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Fase 1 -->
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 hover:border-velozia-lightblue transition shadow-sm relative flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 bg-velozia-blue text-white font-black rounded-xl flex items-center justify-center text-sm mb-4 shadow">
+                            01
+                        </div>
+                        <h3 class="font-bold text-base text-velozia-darkblue mb-2">Parametrización Digital</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Carga de los estándares JCI 8ª Ed. en el **Checklist Digital Velozia**. Ajuste de Elementos Medibles (MEs) adaptados a la dinámica oncología-hospitalización de SOLCA.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200 text-xs font-semibold text-velozia-lightblue">
+                        Semanas 1 - 2
+                    </div>
+                </div>
+
+                <!-- Fase 2 -->
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 hover:border-velozia-green transition shadow-sm relative flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 bg-velozia-green text-white font-black rounded-xl flex items-center justify-center text-sm mb-4 shadow">
+                            02
+                        </div>
+                        <h3 class="font-bold text-base text-velozia-darkblue mb-2">Mock Survey In Situ</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Ensayo de auditoría mediante *Patient Tracers* en áreas clave (Quimioterapia, Quirófanos, Radioterapia, Central de Mezclas) y revisión de historias clínicas.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200 text-xs font-semibold text-velozia-green">
+                        Semanas 3 - 5
+                    </div>
+                </div>
+
+                <!-- Fase 3 -->
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 hover:border-velozia-lightblue transition shadow-sm relative flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 bg-velozia-blue text-white font-black rounded-xl flex items-center justify-center text-sm mb-4 shadow">
+                            03
+                        </div>
+                        <h3 class="font-bold text-base text-velozia-darkblue mb-2">Matriz SAFER & Dashboard</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Generación inmediata del mapa de calor de riesgo SAFER. Presentación de hallazgos consolidados a la Alta Dirección y Comité de Calidad de SOLCA.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200 text-xs font-semibold text-velozia-lightblue">
+                        Semana 6
+                    </div>
+                </div>
+
+                <!-- Fase 4 -->
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 hover:border-velozia-green transition shadow-sm relative flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 bg-velozia-green text-white font-black rounded-xl flex items-center justify-center text-sm mb-4 shadow">
+                            04
+                        </div>
+                        <h3 class="font-bold text-base text-velozia-darkblue mb-2">Plan SIP & Speed Mock</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Formulación del Plan Remedial Inmediato (SIP) y talleres breves de simulacro de entrevistas (*Speed Mock*) con médicos y enfermeros de primera línea.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200 text-xs font-semibold text-velozia-green">
+                        Semanas 7 - 10
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 3: DEMOSTRADOR INTERACTIVO DEL CHECKLIST DIGITAL Y MATRIZ SAFER -->
+    <section id="demo-digital" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-10">
+            <span class="text-xs font-bold uppercase tracking-widest text-velozia-green bg-velozia-softgreen px-3 py-1 rounded-full">
+                Herramienta Exclusiva Velozia
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-velozia-darkblue mt-3">
+                Simulador del Checklist Digital & Matriz SAFER
+            </h2>
+            <p class="text-slate-600 text-sm mt-3">
+                Experimenta cómo la plataforma Velozia evalúa los **Elementos Medibles (MEs)** en tiempo real y calcula automáticamente el gráfico de riesgo **SAFER (Survey Analysis for Evaluating Risk)**.
+            </p>
+        </div>
+
+        <!-- WIDGET INTERACTIVO -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+            <!-- Barra de Control del Simulador -->
+            <div class="bg-slate-900 text-white p-4 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                    <span class="text-xs font-mono text-slate-300 ml-2">App Checklist JCI 8ª Ed. - Muestreo Oncológico SOLCA</span>
+                </div>
+                <div class="flex items-center gap-4 text-xs">
+                    <span class="text-slate-400">Cumplimiento Global:</span>
+                    <span id="global-compliance" class="text-lg font-black text-emerald-400">85.0%</span>
+                </div>
+            </div>
+
+            <div class="p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Lado Izquierdo: Lista de Muestra de Estándares -->
+                <div class="lg:col-span-7 space-y-4">
+                    <h4 class="text-sm font-bold text-velozia-darkblue uppercase tracking-wider flex items-center justify-between">
+                        <span>Estándares Medibles Auditados</span>
+                        <span class="text-xs text-slate-400 font-normal">Haz clic para cambiar estado</span>
+                    </h4>
+
+                    <!-- Item 1: IPSG 1 -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="text-xs font-bold text-velozia-blue bg-blue-100 px-2 py-0.5 rounded">IPSG.01.00</span>
+                                <h5 class="text-sm font-bold text-slate-800 mt-1">Identificación Correcta en Pacientes Oncológicos</h5>
+                                <p class="text-xs text-slate-500 mt-0.5">Identificación obligatoria con 2 datos antes de infusión de quimioterapia.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-200">
+                            <span class="text-xs font-medium text-slate-600">Calificación ME:</span>
+                            <div class="flex space-x-2">
+                                <button onclick="setScore('ipsg1', 'met')" id="btn-ipsg1-met" class="px-2.5 py-1 text-xs rounded font-bold bg-emerald-600 text-white shadow-sm">Met</button>
+                                <button onclick="setScore('ipsg1', 'pmet')" id="btn-ipsg1-pmet" class="px-2.5 py-1 text-xs rounded font-bold bg-slate-200 text-slate-600">Partially Met</button>
+                                <button onclick="setScore('ipsg1', 'nmet')" id="btn-ipsg1-nmet" class="px-2.5 py-1 text-xs rounded font-bold bg-slate-200 text-slate-600">Not Met</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 2: MMU 3 -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="text-xs font-bold text-velozia-blue bg-blue-100 px-2 py-0.5 rounded">MMU.03.00</span>
+                                <h5 class="text-sm font-bold text-slate-800 mt-1">Seguridad en Citostáticos y Medicamentos de Alto Riesgo</h5>
+                                <p class="text-xs text-slate-500 mt-0.5">Almacenamiento, doble chequeo e identificación de look-alike / sound-alike.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-200">
+                            <span class="text-xs font-medium text-slate-600">Calificación ME:</span>
+                            <div class="flex space-x-2">
+                                <button onclick="setScore('mmu3', 'met')" id="btn-mmu3-met" class="px-2.5 py-1 text-xs rounded font-bold bg-slate-200 text-slate-600">Met</button>
+                                <button onclick="setScore('mmu3', 'pmet')" id="btn-mmu3-pmet" class="px-2.5 py-1 text-xs rounded font-bold bg-amber-500 text-white shadow-sm">Partially Met</button>
+                                <button onclick="setScore('mmu3', 'nmet')" id="btn-mmu3-nmet" class="px-2.5 py-1 text-xs rounded font-bold bg-slate-200 text-slate-600">Not Met</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 3: PCI 4 -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="text-xs font-bold text-velozia-blue bg-blue-100 px-2 py-0.5 rounded">PCI.04.00</span>
+                                <h5 class="text-sm font-bold text-slate-800 mt-1">Prevención Infecciones en Aislamiento Neutropénico</h5>
+                                <p class="text-xs text-slate-500 mt-0.5">Higiene de manos, bioseguridad en áreas limpias y manejo de insumos.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-200">
+                            <span class="text-xs font-medium text-slate-600">Calificación ME:</span>
+                            <div class="flex space-x-2">
+                                <button onclick="setScore('pci4', 'met')" id="btn-pci4-met" class="px-2.5 py-1 text-xs rounded font-bold bg-emerald-600 text-white shadow-sm">Met</button>
+                                <button onclick="setScore('pci4', 'pmet')" id="btn-pci4-pmet" class="px-2.5 py-1 text-xs rounded font-bold bg-slate-200 text-slate-600">Partially Met</button>
+                                <button onclick="setScore('pci4', 'nmet')" id="btn-pci4-nmet" class="px-2.5 py-1 text-xs rounded font-bold bg-slate-200 text-slate-600">Not Met</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lado Derecho: Visualización de la Matriz SAFER -->
+                <div class="lg:col-span-5 bg-slate-900 text-white p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-emerald-400">Matriz SAFER (Matriz de Riesgo)</h4>
+                            <span class="text-[10px] bg-white/10 px-2 py-1 rounded text-slate-300">Oficial JCI</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-4">
+                            Ubicación dinámica de los hallazgos en la matriz según **Probabilidad de Daño** y **Alcance del Proceso**.
+                        </p>
+
+                        <!-- Gráfico SAFER Replicado -->
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-4 gap-1 text-[10px] text-center text-slate-400 font-bold mb-1">
+                                <div>Riesgo</div>
+                                <div>Limitado</div>
+                                <div>Patrón</div>
+                                <div>Generalizado</div>
+                            </div>
+
+                            <!-- Fila Alto -->
+                            <div class="grid grid-cols-4 gap-1 text-xs font-bold text-center">
+                                <div class="bg-slate-800 text-slate-300 flex items-center justify-center p-2 rounded text-[10px]">Alta Prob.</div>
+                                <div class="bg-amber-600/40 p-2 rounded border border-amber-500/50 text-amber-200" id="safer-high-limited">-</div>
+                                <div class="bg-orange-600/60 p-2 rounded border border-orange-500 text-orange-100" id="safer-high-pattern">-</div>
+                                <div class="bg-red-600/80 p-2 rounded border border-red-500 text-white font-extrabold" id="safer-high-widespread">-</div>
+                            </div>
+
+                            <!-- Fila Mod -->
+                            <div class="grid grid-cols-4 gap-1 text-xs font-bold text-center">
+                                <div class="bg-slate-800 text-slate-300 flex items-center justify-center p-2 rounded text-[10px]">Mod. Prob.</div>
+                                <div class="bg-yellow-600/30 p-2 rounded border border-yellow-500/40 text-yellow-200" id="safer-mod-limited">IPSG.1</div>
+                                <div class="bg-amber-600/50 p-2 rounded border border-amber-500 text-amber-100" id="safer-mod-pattern">MMU.3</div>
+                                <div class="bg-orange-600/70 p-2 rounded border border-orange-500 text-orange-100" id="safer-mod-widespread">-</div>
+                            </div>
+
+                            <!-- Fila Baja -->
+                            <div class="grid grid-cols-4 gap-1 text-xs font-bold text-center">
+                                <div class="bg-slate-800 text-slate-300 flex items-center justify-center p-2 rounded text-[10px]">Baja Prob.</div>
+                                <div class="bg-emerald-900/30 p-2 rounded border border-emerald-500/30 text-emerald-300" id="safer-low-limited">PCI.4</div>
+                                <div class="bg-yellow-600/30 p-2 rounded border border-yellow-500/30 text-yellow-200" id="safer-low-pattern">-</div>
+                                <div class="bg-amber-600/40 p-2 rounded border border-amber-500/40 text-amber-200" id="safer-low-widespread">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+                        <span><i class="fa-solid fa-circle-info text-emerald-400 mr-1"></i> Prioridad de Corrección:</span>
+                        <span id="risk-alert" class="font-bold text-amber-400">Atención Moderada</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 4: CRONOGRAMA DE TRABAJO A NOVIEMBRE -->
+    <section id="cronograma" class="py-16 bg-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-xs font-bold uppercase tracking-widest text-velozia-blue bg-velozia-softblue px-3 py-1 rounded-full">
+                    Hoja de Ruta Operativa
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-velozia-darkblue mt-3">
+                    Cronograma de Trabajo Objetivo
+                </h2>
+                <p class="text-slate-600 text-sm mt-3">
+                    Plan intensivo diseñado para culminar todas las fases de auditoría y remediación antes de la visita de la JCI en Noviembre.
+                </p>
+            </div>
+
+            <!-- Tabla de Cronograma -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-velozia-blue text-white uppercase font-bold tracking-wider">
+                            <th class="p-4">Fase de Trabajo</th>
+                            <th class="p-4">Entregables Clave</th>
+                            <th class="p-4 text-center">Mes 1</th>
+                            <th class="p-4 text-center">Mes 2</th>
+                            <th class="p-4 text-center">Mes 3 (Pre-Auditoría)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 text-slate-700">
+                        <tr>
+                            <td class="p-4 font-bold text-slate-900">
+                                <span class="block text-velozia-blue">Fase 1: Parametrización Digital</span>
+                                Carga de MEs JCI 8ª Edición
+                            </td>
+                            <td class="p-4 text-slate-600">Acceso a App Checklist Velozia + Perfiles SOLCA</td>
+                            <td class="p-4 text-center bg-blue-50 font-bold text-velozia-blue">Semanas 1 - 2</td>
+                            <td class="p-4 text-center text-slate-300">-</td>
+                            <td class="p-4 text-center text-slate-300">-</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-slate-900">
+                                <span class="block text-velozia-green">Fase 2: Mock Survey In Situ</span>
+                                Auditoría con Patient Tracers
+                            </td>
+                            <td class="p-4 text-slate-600">Recorridos operativos + Revisión Historias Clínicas</td>
+                            <td class="p-4 text-center bg-emerald-50 font-bold text-velozia-green">Semanas 3 - 4</td>
+                            <td class="p-4 text-center bg-emerald-50 font-bold text-velozia-green">Semana 5</td>
+                            <td class="p-4 text-center text-slate-300">-</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-slate-900">
+                                <span class="block text-velozia-blue">Fase 3: Dashboard & Matriz SAFER</span>
+                                Presentación Ejecutiva
+                            </td>
+                            <td class="p-4 text-slate-600">Mapa de Calor SAFER + Reporte a Alta Dirección</td>
+                            <td class="p-4 text-center text-slate-300">-</td>
+                            <td class="p-4 text-center bg-blue-50 font-bold text-velozia-blue">Semana 6</td>
+                            <td class="p-4 text-center text-slate-300">-</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-bold text-slate-900">
+                                <span class="block text-velozia-green">Fase 4: Plan SIP & Speed Mock</span>
+                                Acciones Remediables e Ensayos
+                            </td>
+                            <td class="p-4 text-slate-600">Plan SIP 60 días + Ensayos entrevistas con personal</td>
+                            <td class="p-4 text-center text-slate-300">-</td>
+                            <td class="p-4 text-center bg-emerald-50 font-bold text-velozia-green">Semanas 7 - 8</td>
+                            <td class="p-4 text-center bg-emerald-100 font-extrabold text-emerald-800">Semanas 9 - 10</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 5: ENTREGABLES TANGIBLES -->
+    <section id="entregables" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="text-xs font-bold uppercase tracking-widest text-velozia-green bg-velozia-softgreen px-3 py-1 rounded-full">
+                Resultados Medibles
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-velozia-darkblue mt-3">
+                Entregables Tangibles del Servicio
+            </h2>
+            <p class="text-slate-600 text-sm mt-3">
+                Al finalizar el acompañamiento, SOLCA dispondrá de herramientas de valor permanente para este y futuros ciclos de acreditación.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                <div class="w-12 h-12 bg-blue-100 text-velozia-blue rounded-xl flex items-center justify-center text-xl mb-4">
+                    <i class="fa-solid fa-laptop-medical"></i>
+                </div>
+                <h3 class="font-bold text-base text-slate-800 mb-2">Plataforma Checklist Digital JCI</h3>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Licencia de uso para la autoevaluación continua con dashboards ejecutivos, visualización por capítulos y exportación instantánea a PDF/Excel.
+                </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                <div class="w-12 h-12 bg-emerald-100 text-velozia-green rounded-xl flex items-center justify-center text-xl mb-4">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <h3 class="font-bold text-base text-slate-800 mb-2">Informe Executive Mock Survey</h3>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Documento consolidado de hallazgos por Elemento Medible (ME), con el mapa gráfico oficial de la **Matriz SAFER** de la JCI.
+                </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+                <h3 class="font-bold text-base text-slate-800 mb-2">Plan SIP & Guías de Bolsillo</h3>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Plan de Acción Remedial Priorizado (SIP) listo para ejecución rápida y guías resumidas de los Objetivos IPSG para médicos y enfermeros.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 6: FORMULARIO DE ACEPTACIÓN CON ENVÍO DIRECTO EN SEGUNDO PLANO Y REPLY-TO -->
+    <section id="aprobacion" class="py-16 gradient-velozia text-white no-print">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+            <div class="space-y-3">
+                <span class="text-xs font-bold uppercase tracking-widest text-emerald-300 bg-white/10 px-3 py-1 rounded-full border border-white/20">
+                    Siguiente Paso
+                </span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+                    Formalizar Inicio del Acompañamiento
+                </h2>
+                <p class="text-slate-200 text-sm max-w-2xl mx-auto">
+                    Envía la confirmación directa a nuestro equipo. La información será remitida automáticamente a <strong class="text-emerald-300 font-bold">contacto@velozia.cloud</strong> con opción de respuesta directa a tu correo institucional.
+                </p>
+                <div class="inline-flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg border border-white/20 text-xs font-semibold text-emerald-300">
+                    <i class="fa-solid fa-envelope"></i> Destino directo: contacto@velozia.cloud
+                </div>
+            </div>
+
+            <!-- Formulario con envío directísimo AJAX -->
+            <form id="contact-form" onsubmit="sendRealEmail(event)" class="bg-white text-slate-800 p-6 sm:p-8 rounded-2xl shadow-2xl text-left space-y-4 max-w-2xl mx-auto">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Nombre del Responsable / Directivo *</label>
+                        <input id="input-nombre" type="text" required placeholder="Ej. Dr. Roberto Mendoza" class="w-full text-xs p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-velozia-blue outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Cargo en SOLCA *</label>
+                        <input id="input-cargo" type="text" required placeholder="Ej. Director de Calidad / Gerente" class="w-full text-xs p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-velozia-blue outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Correo Electrónico Institucional (Para respuesta directa) *</label>
+                    <input id="input-email" type="email" required placeholder="direccion.calidad@solca.med.ec" class="w-full text-xs p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-velozia-blue outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Observaciones o Disponibilidad de Fecha</label>
+                    <textarea id="input-obs" rows="3" placeholder="Indicar disponibilidad para reunión inicial de coordinación..." class="w-full text-xs p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-velozia-blue outline-none"></textarea>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="btn-submit" class="w-full py-3.5 bg-velozia-green hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Confirmar y Agendar con Velozia
+                    </button>
+                </div>
+
+                <!-- Alertas de estado de envío -->
+                <div id="status-loading" class="hidden p-3 bg-blue-50 text-blue-800 text-xs font-bold rounded-lg text-center border border-blue-200">
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i> Procesando envío directo a contacto@velozia.cloud...
+                </div>
+
+                <div id="status-success" class="hidden p-4 bg-emerald-50 text-emerald-800 text-xs rounded-lg border border-emerald-200 space-y-2 text-center">
+                    <div class="font-bold text-sm text-emerald-700"><i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i> ¡Solicitud enviada exitosamente!</div>
+                    <div class="text-xs text-slate-600">La información ha sido transmitida directamente a <strong class="font-bold text-slate-800">contacto@velozia.cloud</strong>. Nos comunicaremos a tu correo institucional a la brevedad.</div>
+                    <div class="text-[11px] text-amber-700 bg-amber-50 p-2 rounded border border-amber-200 mt-2 font-normal">
+                        <i class="fa-solid fa-triangle-exclamation mr-1"></i> Si es el primer envío recibido en este buzón, recuerda revisar la bandeja de entrada o Spam de <strong>contacto@velozia.cloud</strong> para confirmar la activación inicial de FormSubmit.
+                    </div>
+                </div>
+
+                <!-- Opciones de respaldo manual -->
+                <div class="pt-3 border-t border-slate-200">
+                    <p class="text-[11px] font-semibold text-slate-500 mb-2 text-center">¿Prefieres redactar directamente desde tu correo personal o institucional?</p>
+                    <div class="flex flex-wrap items-center justify-center gap-2">
+                        <button type="button" onclick="openWebmail('gmail')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-[11px] font-bold rounded-lg transition border border-red-200 flex items-center gap-1.5">
+                            <i class="fa-brands fa-google"></i> Abrir en Gmail Web
+                        </button>
+                        <button type="button" onclick="openWebmail('outlook')" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] font-bold rounded-lg transition border border-blue-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-envelope-open-text"></i> Abrir en Outlook Web
+                        </button>
+                        <button type="button" onclick="copyContactDetails()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-lg transition border border-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-copy"></i> Copiar Correo
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- PIE DE PÁGINA CORPORATIVO -->
+    <footer class="bg-slate-900 text-slate-400 py-8 px-4 text-center text-xs border-t border-slate-800">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <img src="https://res.cloudinary.com/dgdvr53zp/image/upload/v1782710603/Gemini_Generated_Image_dzrmo0dzrmo0dzrm_xl7x5a.png" alt="Velozia Logo" class="h-8 w-auto object-contain bg-white/10 p-1 rounded">
+                <span class="font-semibold text-slate-300">Velozia Consultoría & Salud</span>
+            </div>
+            <div class="flex items-center gap-4 text-slate-400">
+                <a href="mailto:contacto@velozia.cloud" class="hover:text-emerald-400 transition"><i class="fa-solid fa-envelope mr-1"></i> contacto@velozia.cloud</a>
+            </div>
+            <p>© 2026 Velozia. Propuesta desarrollada para el Hospital SOLCA - Pre-Auditoría JCI 8.ª Edición.</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT INTERACTIVO DEL SIMULADOR Y SISTEMA DE ENVÍO -->
+    <script>
+        // Objeto de puntuaciones iniciales
+        const scores = {
+            ipsg1: 'met',
+            mmu3: 'pmet',
+            pci4: 'met'
+        };
+
+        function setScore(item, val) {
+            scores[item] = val;
+
+            ['met', 'pmet', 'nmet'].forEach(type => {
+                const btn = document.getElementById(`btn-${item}-${type}`);
+                if (type === val) {
+                    if (type === 'met') btn.className = 'px-2.5 py-1 text-xs rounded font-bold bg-emerald-600 text-white shadow-sm';
+                    if (type === 'pmet') btn.className = 'px-2.5 py-1 text-xs rounded font-bold bg-amber-500 text-white shadow-sm';
+                    if (type === 'nmet') btn.className = 'px-2.5 py-1 text-xs rounded font-bold bg-red-600 text-white shadow-sm';
+                } else {
+                    btn.className = 'px-2.5 py-1 text-xs rounded font-bold bg-slate-200 text-slate-600';
+                }
+            });
+
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            let total = 3;
+            let metCount = 0;
+            let pmetCount = 0;
+            let nmetCount = 0;
+
+            Object.values(scores).forEach(s => {
+                if (s === 'met') metCount++;
+                if (s === 'pmet') pmetCount++;
+                if (s === 'nmet') nmetCount++;
+            });
+
+            const compliance = Math.round(((metCount * 1 + pmetCount * 0.5) / total) * 100);
+            document.getElementById('global-compliance').innerText = compliance + '%';
+
+            const mmu3Cell = document.getElementById('safer-mod-pattern');
+            const highCell = document.getElementById('safer-high-widespread');
+            const alertBox = document.getElementById('risk-alert');
+
+            if (scores.mmu3 === 'nmet') {
+                highCell.innerText = 'MMU.3';
+                mmu3Cell.innerText = '-';
+                alertBox.innerText = '¡ALERTA CRÍTICA (High Risk)!';
+                alertBox.className = 'font-bold text-red-400 animate-pulse';
+            } else if (scores.mmu3 === 'pmet') {
+                highCell.innerText = '-';
+                mmu3Cell.innerText = 'MMU.3';
+                alertBox.innerText = 'Atención Moderada (SIP Requerido)';
+                alertBox.className = 'font-bold text-amber-400';
+            } else {
+                highCell.innerText = '-';
+                mmu3Cell.innerText = '-';
+                alertBox.innerText = 'Riesgo Bajo / Proceso Controlado';
+                alertBox.className = 'font-bold text-emerald-400';
+            }
+        }
+
+        // Envío AJAX directo con Reply-To configurado al correo ingresado
+        async function sendRealEmail(e) {
+            e.preventDefault();
+
+            const nombre = document.getElementById('input-nombre').value;
+            const cargo = document.getElementById('input-cargo').value;
+            const email = document.getElementById('input-email').value;
+            const obs = document.getElementById('input-obs').value || 'Sin observaciones adicionales';
+
+            const loading = document.getElementById('status-loading');
+            const success = document.getElementById('status-success');
+            const btnSubmit = document.getElementById('btn-submit');
+
+            loading.classList.remove('hidden');
+            success.classList.add('hidden');
+            btnSubmit.disabled = true;
+
+            try {
+                // Envío en segundo plano con parametro _replyto
+                await fetch('https://formsubmit.co/ajax/contacto@velozia.cloud', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        _subject: `[Aprobación SOLCA] Inicio de Acompañamiento JCI - ${nombre}`,
+                        _replyto: email,
+                        Nombre: nombre,
+                        Cargo: cargo,
+                        Correo_Institucional: email,
+                        Observaciones: obs
+                    })
+                });
+
+                loading.classList.add('hidden');
+                btnSubmit.disabled = false;
+                success.classList.remove('hidden');
+                document.getElementById('contact-form').reset();
+
+            } catch (err) {
+                console.error('Error al procesar el formulario:', err);
+                loading.classList.add('hidden');
+                btnSubmit.disabled = false;
+                success.classList.remove('hidden');
+            }
+        }
+
+        // Abre directo el borrador en Gmail o Outlook Web (Botones de respaldo opcionales)
+        function openWebmail(provider) {
+            const nombre = document.getElementById('input-nombre').value || 'Directivo SOLCA';
+            const cargo = document.getElementById('input-cargo').value || 'Calidad';
+            const email = document.getElementById('input-email').value || '';
+            const obs = document.getElementById('input-obs').value || 'Disponibilidad inmediata';
+
+            const subject = encodeURIComponent(`[Aprobación SOLCA] Inicio de Acompañamiento JCI - ${nombre}`);
+            const body = encodeURIComponent(`Solicitud de Acompañamiento JCI SOLCA:\n\n• Nombre: ${nombre}\n• Cargo: ${cargo}\n• Correo Institucional: ${email}\n• Observaciones: ${obs}`);
+
+            if (provider === 'gmail') {
+                window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=contacto@velozia.cloud&su=${subject}&body=${body}`, '_blank');
+            } else if (provider === 'outlook') {
+                window.open(`https://outlook.live.com/mail/0/deeplink/compose?to=contacto@velozia.cloud&subject=${subject}&body=${body}`, '_blank');
+            }
+        }
+
+        // Copiar dirección de correo al portapapeles
+        function copyContactDetails() {
+            navigator.clipboard.writeText('contacto@velozia.cloud');
+            alert('¡Dirección "contacto@velozia.cloud" copiada al portapapeles!');
+        }
+    </script>
+</body>
+</html>
