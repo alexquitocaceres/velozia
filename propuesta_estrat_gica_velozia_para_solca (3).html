@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta Estratégica VELOZIA - SOLCA Guayaquil</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        velozia: {
+                            blue: '#0F4C81',
+                            darkblue: '#0A2540',
+                            lightblue: '#2563EB',
+                            green: '#10B981',
+                            lightgreen: '#D1FAE5',
+                            accent: '#06B6D4',
+                            graybg: '#F8FAFC'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        .gradient-header {
+            background: linear-gradient(135deg, #0A2540 0%, #0F4C81 50%, #059669 100%);
+        }
+        .gradient-card {
+            background: linear-gradient(135deg, #ffffff 0%, #F8FAFC 100%);
+        }
+        .active-tab {
+            border-bottom: 3px solid #10B981;
+            color: #0F4C81;
+            font-weight: 700;
+        }
+        .glow-effect {
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.15), 0 8px 10px -6px rgba(15, 76, 129, 0.1);
+        }
+        /* Oculta barra de scroll fea en móviles manteniendo la funcionalidad */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- HEADER & NAVBAR -->
+    <header class="gradient-header text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            
+            <!-- Top Header Container -->
+            <div class="py-2.5 sm:py-4">
+                <div class="flex items-center justify-between gap-2 sm:gap-4">
+                    
+                    <!-- Brand 1: VELOZIA -->
+                    <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+                        <div class="bg-velozia-darkblue p-1.5 sm:p-2 rounded-xl border border-white/10 shadow-sm flex items-center justify-center shrink-0">
+                            <img src="https://res.cloudinary.com/dgdvr53zp/image/upload/v1782710603/Gemini_Generated_Image_dzrmo0dzrmo0dzrm_xl7x5a.png" alt="Velozia Logo" class="h-7 sm:h-10 w-auto object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x50?text=VELOZIA';">
+                        </div>
+                        <div class="min-w-0">
+                            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                                <h1 class="text-base sm:text-xl font-bold tracking-tight text-white leading-tight">
+                                    VELOZIA
+                                </h1>
+                                <span class="hidden md:inline-flex text-emerald-400 text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/30 whitespace-nowrap">Consultoría Estratégica & Operativa</span>
+                            </div>
+                            <p class="hidden sm:block text-[11px] sm:text-xs text-blue-100 truncate mt-0.5">Plan Estratégico de Regularización Sanitaria y Certificación BPM ARCSA - SOLCA</p>
+                        </div>
+                    </div>
+
+                    <!-- Brand 2: CIRADSA -->
+                    <div class="flex items-center space-x-2 sm:space-x-3 bg-velozia-darkblue/90 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-white/15 shadow-sm shrink-0">
+                        <div class="text-right hidden md:block">
+                            <span class="text-xs font-bold text-white block leading-tight">CIRADSA S.A.</span>
+                            <span class="text-[10px] font-medium text-emerald-400 block tracking-tight">Desarrollo y mejora continua</span>
+                        </div>
+                        <div class="bg-white p-1 rounded-lg shadow-sm flex items-center justify-center h-7 sm:h-10 overflow-hidden shrink-0">
+                            <img src="https://res.cloudinary.com/dgdvr53zp/image/upload/v1785274863/ALogo_j1mkb7.jpg" alt="CIRADSA Logo" class="h-5 sm:h-8 w-auto object-contain" onerror="this.onerror=null; this.src='https://via.placeholder.com/120x40?text=CIRADSA';">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Subtítulo exclusivo para vista Móvil -->
+                <div class="sm:hidden mt-2 pt-2 border-t border-white/10">
+                    <p class="text-[11px] text-blue-100 font-medium leading-tight">
+                        Plan Estratégico de Regularización Sanitaria y Certificación BPM ARCSA - SOLCA
+                    </p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex space-x-1 overflow-x-auto no-scrollbar border-t border-white/10 pt-1.5 pb-2 text-xs sm:text-sm font-medium">
+                <button onclick="switchTab('resumen')" id="tab-resumen" class="active-tab px-3 sm:px-4 py-2 text-white hover:text-emerald-300 transition flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-chart-pie text-emerald-400"></i> Resumen Ejecutivo
+                </button>
+                <button onclick="switchTab('friccion')" id="tab-friccion" class="px-3 sm:px-4 py-2 text-blue-200 hover:text-white transition flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-scale-balanced text-amber-400"></i> Alineación Regulatoria & Anexo 8
+                </button>
+                <button onclick="switchTab('viernes')" id="tab-viernes" class="px-3 sm:px-4 py-2 text-blue-200 hover:text-white transition flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-calendar-check text-emerald-400"></i> Plan de Acción para el Viernes
+                </button>
+                <button onclick="switchTab('mesa')" id="tab-mesa" class="px-3 sm:px-4 py-2 text-blue-200 hover:text-white transition flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-sitemap text-cyan-400"></i> Mesa Técnica Nacional
+                </button>
+                <button onclick="switchTab('velozia')" id="tab-velozia" class="px-3 sm:px-4 py-2 text-blue-200 hover:text-white transition flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-gears text-emerald-300"></i> Soporte Operativo BPM
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB 1: RESUMEN EJECUTIVO -->
+        <div id="content-resumen" class="space-y-8">
+            <!-- Hero Card -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 glow-effect">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                    <div class="space-y-3 max-w-3xl">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            <i class="fa-solid fa-bullseye"></i> Propuesta Estratégica de Garantía de Calidad
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-velozia-darkblue">
+                            Estrategia de Regularización Sanitaria y Certificación BPM para SOLCA Guayaquil
+                        </h2>
+                        <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                            Esta propuesta transforma la inspección de la ARCSA de este viernes de un escenario de observación técnica a una <strong>oportunidad de liderazgo en calidad farmacéutica nacional</strong>. Al adoptar formalmente la Resolución <span class="font-semibold text-velozia-blue">ARCSA-DE-008-2018-JCGO (Anexo 8)</span> como marco rector, <strong>VELOZIA</strong> y <strong class="text-slate-800">CIRADSA S.A.</strong> articularán el plan de implementación técnica y el sistema de soporte operativo para asegurar la trazabilidad de la manufactura de radiofármacos PET (<span class="font-mono text-emerald-600 font-semibold">[<sup>18</sup>F]-FluormetilColina</span> y <span class="font-mono text-emerald-600 font-semibold">[<sup>18</sup>F]-PSMA</span>).
+                        </p>
+                    </div>
+                    <div class="bg-gradient-to-br from-slate-900 to-velozia-darkblue text-white p-6 rounded-xl shadow-md w-full lg:w-80 shrink-0 border border-slate-700">
+                        <div class="text-xs text-emerald-400 font-semibold uppercase tracking-wider mb-1">Objetivo del Proyecto</div>
+                        <div class="text-3xl font-extrabold text-white mb-2">100%</div>
+                        <p class="text-xs text-slate-300 leading-snug">
+                            Cumplimiento de las exigencias de la ARCSA, inicio formal de los 6 meses de lotes piloto con trazabilidad de datos y consolidación de la Mesa Técnica Nacional.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Indicators Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 transition">
+                    <div class="w-12 h-12 rounded-lg bg-blue-100 text-velozia-blue flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-lg mb-2">Especificidad Técnica PET</h3>
+                    <p class="text-slate-600 text-sm">
+                        El Flúor-18 (<sup>18</sup>F) posee una vida media de <strong>109 minutos</strong>. Exige protocolos de aseguramiento de calidad con liberación rápida y controles analíticos retrospectivos de precisión.
+                    </p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-emerald-400 transition">
+                    <div class="w-12 h-12 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-lg mb-2">Regularización Sanitaria</h3>
+                    <p class="text-slate-600 text-sm">
+                        Estructuración del proceso bajo el <strong>Anexo 8 de la ARCSA</strong>, formalizando el cronograma de 6 meses de lotes piloto para la obtención de la Certificación de BPM.
+                    </p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-cyan-400 transition">
+                    <div class="w-12 h-12 rounded-lg bg-cyan-100 text-cyan-600 flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-lg mb-2">Aseguramiento & Trazabilidad</h3>
+                    <p class="text-slate-600 text-sm">
+                        Despliegue del sistema de <strong>Gestión de Registros de Lote</strong>, control de decaimiento isotópico y protocolo de cadena de custodia hospitalaria (<em>PET-Log</em>).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Summary Table / Context -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                <h3 class="text-lg font-bold text-velozia-darkblue mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-emerald-500"></i> Matriz de Alineación Regulatoria SOLCA vs. ARCSA
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-semibold border-b border-slate-200">
+                                <th class="p-3">Variable</th>
+                                <th class="p-3">Antecedente SOLCA</th>
+                                <th class="p-3">Dictamen ARCSA (Of. 3762-O)</th>
+                                <th class="p-3 bg-emerald-50 text-emerald-900">Solución Propuesta VELOZIA - CIRADSA</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="p-3 font-medium text-slate-900">Marco Legal</td>
+                                <td class="p-3 text-slate-600">Solicitó "Autorización Excepcional" argumentando falta de norma específica.</td>
+                                <td class="p-3 text-slate-600">Ratifica vigencia obligatoria de Res. ARCSA-DE-008-2018-JCGO.</td>
+                                <td class="p-3 bg-emerald-50/50 text-emerald-950 font-semibold">Adoptar Anexo 8 como estándar rector de manufactura.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium text-slate-900">Comercialización</td>
+                                <td class="p-3 text-slate-600">Requirió proveer a centros PET/CT a nivel nacional.</td>
+                                <td class="p-3 text-slate-600">Prohíbe comercializar sin Certificado de BPM otorgado.</td>
+                                <td class="p-3 bg-emerald-50/50 text-emerald-950 font-semibold">Convenio temporal asistencial / Ensayo clínico controlado.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium text-slate-900">Lotes Piloto</td>
+                                <td class="p-3 text-slate-600">Operación continua en ciclotrón con guías internacionales.</td>
+                                <td class="p-3 text-slate-600">Exige mínimo 6 meses de registros continuos de BPM.</td>
+                                <td class="p-3 bg-emerald-50/50 text-emerald-950 font-semibold">Sistemas de gestión de lotes piloto e instrumental de calidad.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: PUNTO DE FRICCIÓN Y ANEXO 8 -->
+        <div id="content-friccion" class="hidden space-y-8">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <div class="max-w-3xl space-y-3 mb-6">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 inline-block">
+                        <i class="fa-solid fa-magnifying-glass"></i> Diagnóstico Regulatorio Profundo
+                    </span>
+                    <h2 class="text-2xl font-bold text-velozia-darkblue">Análisis Técnico del Encuadre Regulatorio</h2>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        El distanciamiento posicional entre SOLCA y la ARCSA responde a una diferencia de <strong>encuadre procedimental y temporal</strong>. A continuación se desglosa la articulación entre la normativa de BPM, la herramienta del Anexo 8 y la estrategia para armonizar ambos criterios.
+                    </p>
+                </div>
+
+                <!-- Structural Relationship Diagram -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 text-center relative">
+                        <div class="text-xs font-bold text-velozia-blue uppercase tracking-wider mb-2">1. La Norma Marco</div>
+                        <div class="font-bold text-slate-900 text-base">Res. ARCSA-DE-008-2018-JCGO</div>
+                        <p class="text-xs text-slate-500 mt-2">Establece la obligatoriedad legal de BPM para todo laboratorio farmacéutico en Ecuador.</p>
+                        <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 text-slate-400">
+                            <i class="fa-solid fa-chevron-right text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 p-5 rounded-xl border border-blue-200 text-center relative">
+                        <div class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-2">2. El Instrumento Técnico</div>
+                        <div class="font-bold text-blue-950 text-base">Anexo 8 (Guía de Verificación)</div>
+                        <p class="text-xs text-blue-800 mt-2">Checklist oficial alineado a la OMS (TRS 908) para auditar instalaciones de Radiofármacos.</p>
+                        <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 text-slate-400">
+                            <i class="fa-solid fa-chevron-right text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="bg-emerald-50 p-5 rounded-xl border border-emerald-200 text-center">
+                        <div class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">3. El Resultado Sanitario</div>
+                        <div class="font-bold text-emerald-950 text-base">Certificado BPM de Radiofármacos</div>
+                        <p class="text-xs text-emerald-800 mt-2">Habilita formalmente la producción y distribución nacional con validez de 3 años.</p>
+                    </div>
+                </div>
+
+                <!-- Friction Decomposition -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    <div class="p-5 rounded-xl bg-red-50/60 border border-red-200">
+                        <h4 class="font-bold text-red-900 flex items-center gap-2 mb-3">
+                            <i class="fa-solid fa-xmark-circle text-red-600"></i> Escenario de Incompatibilidad Inicial
+                        </h4>
+                        <ul class="space-y-2 text-xs sm:text-sm text-red-950">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-minus text-red-500 mt-1"></i>
+                                <span>SOLCA solicita una "Excepción" aduciendo singularidad física de radioisótopos de vida media corta.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-minus text-red-500 mt-1"></i>
+                                <span>ARCSA interpreta la petición como una omisión al marco reglamentario y ratifica la prohibición de distribución.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-minus text-red-500 mt-1"></i>
+                                <span>Efecto: Detención de la cobertura diagnóstica para pacientes oncológicos en centros externos.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-emerald-50/60 border border-emerald-200">
+                        <h4 class="font-bold text-emerald-900 flex items-center gap-2 mb-3">
+                            <i class="fa-solid fa-check-circle text-emerald-600"></i> Escenario de Armonización (Plan <strong>VELOZIA</strong> - CIRADSA)
+                        </h4>
+                        <ul class="space-y-2 text-xs sm:text-sm text-emerald-950">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                                <span>SOLCA asume el <strong>Anexo 8</strong> como base de evaluación y formaliza su Plan Maestro de Validación.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                                <span>ARCSA valida el inicio del cómputo de los <strong>6 meses de lotes piloto</strong> con trazabilidad garantizada.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                                <span>Se establece un protocolo de provisión asistencial bajo control de calidad durante la fase de homologación.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: PLAN DE ACCIÓN PARA EL VIERNES -->
+        <div id="content-viernes" class="hidden space-y-8">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 inline-block mb-2">
+                            <i class="fa-solid fa-briefcase"></i> Estrategia de Coordinación Institucional
+                        </span>
+                        <h2 class="text-2xl font-bold text-velozia-darkblue">Plan de Acción Inmediato para la Visita del Viernes</h2>
+                        <p class="text-slate-600 text-sm">Hoja de ruta táctica para la reunión con las autoridades de la ARCSA en las instalaciones de SOLCA.</p>
+                    </div>
+                    <button onclick="window.print()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-medium transition flex items-center gap-2 shrink-0">
+                        <i class="fa-solid fa-print"></i> Imprimir Guía para Reunión
+                    </button>
+                </div>
+
+                <!-- Agenda for Friday -->
+                <div class="space-y-4">
+                    <!-- Step 1 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-velozia-blue text-white flex items-center justify-center font-bold shrink-0">
+                            1
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-slate-900 text-base">Apertura e Integración Institucional (Posicionamiento Técnico)</h4>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Declarar formalmente que SOLCA <strong>asume con rigor los criterios de calidad sanitaria</strong> y ratifica la Resolución ARCSA-DE-008-2018-JCGO y su <strong>Anexo 8</strong> como la guía rectora para la calificación de la Unidad de Ciclotrón.
+                            </p>
+                            <div class="bg-blue-50 p-3 rounded-lg border border-blue-200 text-xs text-blue-900 font-mono mt-2">
+                                "Aceptamos la guía del Anexo 8 como nuestra hoja de ruta de manufactura y solicitamos la suscripción del Acta de Inicio de Evaluación de Lotes Piloto."
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0">
+                            2
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-slate-900 text-base">Presentación del Expediente Técnico & Alianza <strong>VELOZIA</strong> - CIRADSA</h4>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Exhibir a la comitiva de la ARCSA los componentes técnicos del Anexo 8 (Dirección Técnica, dosimetría, sistemas HVAC, control analítico retrospectivo) y la alianza con <strong>VELOZIA</strong> y <strong>CIRADSA S.A.</strong> para el soporte operativo e integridad de datos en el <em>Batch Record</em>.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-cyan-600 text-white flex items-center justify-center font-bold shrink-0">
+                            3
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-slate-900 text-base">Acuerdo del Cronograma Oficial de Lotes Piloto (6 Meses)</h4>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Acordar el hito de inicio de los 6 meses de manufactura de lotes piloto (exigido en el Oficio 3762-O), programando revisiones técnicas intermedias a los 3 y 6 meses.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold shrink-0">
+                            4
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-slate-900 text-base">Suscripción de Intención para la Mesa Técnica Nacional</h4>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Proponer que la experiencia de SOLCA se vincule con el Ministerio de Salud Pública (MSP) y la Subsecretaría de Control y Aplicaciones Nucleares (SCAN) para consolidar el <strong>Modelo Piloto de Radiofarmacia Centralizada en Ecuador</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: MESA TÉCNICA NACIONAL -->
+        <div id="content-mesa" class="hidden space-y-8">
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <div class="max-w-3xl space-y-3 mb-6">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-cyan-100 text-cyan-800 border border-cyan-300 inline-block">
+                        <i class="fa-solid fa-network-wired"></i> Gobernanza e Intersectorialidad
+                    </span>
+                    <h2 class="text-2xl font-bold text-velozia-darkblue">Propuesta de la Mesa Técnica Nacional de Radiofarmacia PET</h2>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Para encuadrar el proceso dentro del marco de la <strong>salud pública y la seguridad nuclear</strong>, SOLCA impulsará una instancia de coordinación interinstitucional soportada por los entes rectores del Estado.
+                    </p>
+                </div>
+
+                <!-- Ecosystem Architecture -->
+                <div class="bg-slate-900 text-white p-6 rounded-xl my-6 border border-slate-800">
+                    <h3 class="text-center font-bold text-emerald-400 text-lg mb-6">Ecosistema Regulatorio Tripartito (Marco Regulatorio Integral)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Stakeholder 1 -->
+                        <div class="bg-slate-800/80 p-5 rounded-lg border border-slate-700">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-sm">MSP</div>
+                                <h4 class="font-bold text-white text-sm">Ministerio de Salud Pública</h4>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                <strong>Rectoría Sanitaria (Art. 137 LOS):</strong> Garantía de acceso e interés público. Define el protocolo de uso asistencial/diagnóstico para la Red Pública Integral de Salud (RPIS).
+                            </p>
+                        </div>
+
+                        <!-- Stakeholder 2 -->
+                        <div class="bg-slate-800/80 p-5 rounded-lg border border-slate-700">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">ARCSA</div>
+                                <h4 class="font-bold text-white text-sm">Agencia de Regulación Sanitaria</h4>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                <strong>Calidad Farmacéutica:</strong> Ente auditor de las BPM (Res. 008-2018 Anexo 8). Audita los 6 meses de lotes piloto y emite la certificación correspondiente.
+                            </p>
+                        </div>
+
+                        <!-- Stakeholder 3 -->
+                        <div class="bg-slate-800/80 p-5 rounded-lg border border-slate-700">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm">SCAN</div>
+                                <h4 class="font-bold text-white text-sm">SCAN (Min. Energía)</h4>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                <strong>Seguridad Radiológica:</strong> Licenciamiento de la operación del Ciclotrón, blindajes, física médica, transporte radiactivo y gestión de desechos.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800 text-center">
+                        <span class="inline-block px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-xs border border-emerald-500/30">
+                            <i class="fa-solid fa-crown text-emerald-400 mr-1"></i> SOLCA Guayaquil: Centro Productor Piloto & Referente Técnico Nacional
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: PROPUESTA DE SOPORTE OPERATIVO VELOZIA -->
+        <div id="content-velozia" class="hidden space-y-8">
+            <!-- Header Card -->
+            <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <div class="max-w-3xl space-y-3 mb-6">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 inline-block">
+                        <i class="fa-solid fa-gears"></i> Sistema de Gestión e Instrumental BPM
+                    </span>
+                    <h2 class="text-2xl font-bold text-velozia-darkblue">Sistema de Gestión de Calidad, Trazabilidad y Control Operativo PET</h2>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Para asegurar el cumplimiento impecable de los requerimientos del Anexo 8 durante los 6 meses de lotes piloto, <strong>VELOZIA</strong> y <strong>CIRADSA S.A.</strong> desplegarán un sistema de control operativo e integridad de datos adaptado a los estándares de la farmacia nuclear.
+                    </p>
+                </div>
+
+                <!-- Software Modules Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+                    <!-- Module 1 -->
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 hover:border-velozia-blue transition shadow-xs">
+                        <div class="w-10 h-10 rounded-lg bg-velozia-blue text-white flex items-center justify-center font-bold mb-3">
+                            <i class="fa-solid fa-file-contract"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-base mb-1">Módulo 1: Batch Record e Historial de Lote (Anexo 8)</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Estructuración de las guías de producción del Ciclotrón, firmas del Químico Farmacéutico, registro ambiental diferencial de presiones HVAC y validación de liberación de lotes.
+                        </p>
+                    </div>
+
+                    <!-- Module 2 -->
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 hover:border-emerald-500 transition shadow-xs">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold mb-3">
+                            <i class="fa-solid fa-atom"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-base mb-1">Módulo 2: Calculadora y Registro de Decaimiento <sup>18</sup>F</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Algoritmo de cálculo de decaimiento isotópico (t<sub>½</sub> = 109 min) que relaciona la actividad sintética del vial con la dosis efectiva al momento de la administración clínica.
+                        </p>
+                    </div>
+
+                    <!-- Module 3 -->
+                    <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 hover:border-cyan-500 transition shadow-xs">
+                        <div class="w-10 h-10 rounded-lg bg-cyan-600 text-white flex items-center justify-center font-bold mb-3">
+                            <i class="fa-solid fa-truck-fast"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-base mb-1">Módulo 3: Cadena de Custodia & PET-Logistics</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Procedimiento estructurado de despacho a centros hospitalarios, control de tiempos de transporte, verificación de dosis recibida y registro de farmacovigilancia.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Interactive Widget: Half-Life Decay Simulator -->
+                <div class="mt-8 bg-gradient-to-br from-slate-900 to-velozia-darkblue p-6 rounded-2xl text-white border border-slate-800">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Demostración de Control Operativo <strong>VELOZIA</strong> - CIRADSA</span>
+                            <h3 class="text-lg font-bold text-white">Simulador de Control de Actividad y Decaimiento Radioactivo (<sup>18</sup>F - 109 min)</h3>
+                        </div>
+                        <div class="text-xs bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-300 font-mono">
+                            Fórmula: A(t) = A<sub>0</sub> · e<sup>-λt</sup>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+                        <!-- Controls -->
+                        <div class="space-y-4 bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                            <div>
+                                <label class="text-xs text-slate-300 font-medium block mb-1">Actividad Inicial en Ciclotrón (A<sub>0</sub> en mCi):</label>
+                                <input type="number" id="initialActivity" value="500" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-sm focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-300 font-medium block mb-1">Tiempo Transcurrido / Transporte (Horas):</label>
+                                <input type="range" id="timeHours" min="0" max="6" step="0.5" value="2" class="w-full accent-emerald-500">
+                                <div class="flex justify-between text-xs font-mono text-slate-400 mt-1">
+                                    <span>0 hrs</span>
+                                    <span id="selectedHoursText" class="text-emerald-400 font-bold">2.0 horas</span>
+                                    <span>6 hrs</span>
+                                </div>
+                            </div>
+                            <button onclick="calculateDecay()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-lg text-xs transition">
+                                <i class="fa-solid fa-calculator mr-1"></i> Calcular Actividad Remanente
+                            </button>
+                        </div>
+
+                        <!-- Results -->
+                        <div class="space-y-3 bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center">
+                            <div class="text-xs text-slate-400">Actividad al Momento de Administración:</div>
+                            <div id="remainingActivityText" class="text-4xl font-extrabold text-emerald-400 font-mono">232.8 mCi</div>
+                            <div id="decayPercentageText" class="text-xs text-slate-300">
+                                Conserva el <span class="text-emerald-300 font-bold">46.5%</span> de la actividad inicial.
+                            </div>
+                            <div class="text-xs text-slate-400 border-t border-slate-700 pt-2 mt-2">
+                                <i class="fa-solid fa-shield-halved text-emerald-400"></i> Verificación de Trazabilidad <strong>VELOZIA</strong> BPM: <span class="text-emerald-300">Conforme</span>
+                            </div>
+                        </div>
+
+                        <!-- Chart -->
+                        <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 h-48 flex items-center justify-center">
+                            <canvas id="decayChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Implementation Timeline Gantt -->
+                <div class="mt-8 bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h3 class="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-timeline text-velozia-blue"></i> Cronograma de Implementación BPM - SOLCA (6 Meses)
+                    </h3>
+                    <div class="space-y-3">
+                        <!-- Month 1 -->
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-xs">
+                            <div class="w-24 font-bold text-slate-700">Mes 1:</div>
+                            <div class="flex-1 bg-slate-200 rounded-full h-6 w-full overflow-hidden flex">
+                                <div class="bg-velozia-blue text-white px-3 flex items-center font-bold text-[10px]" style="width: 25%;">Implementación de Procedimientos & Batch Record</div>
+                            </div>
+                        </div>
+                        <!-- Month 2-3 -->
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-xs">
+                            <div class="w-24 font-bold text-slate-700">Meses 2 - 3:</div>
+                            <div class="flex-1 bg-slate-200 rounded-full h-6 w-full overflow-hidden flex">
+                                <div class="bg-emerald-600 text-white px-3 flex items-center font-bold text-[10px]" style="width: 50%;">Lotes Piloto 1 a 3 & Auditoría Parcial ARCSA</div>
+                            </div>
+                        </div>
+                        <!-- Month 4-5 -->
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-xs">
+                            <div class="w-24 font-bold text-slate-700">Meses 4 - 5:</div>
+                            <div class="flex-1 bg-slate-200 rounded-full h-6 w-full overflow-hidden flex">
+                                <div class="bg-cyan-600 text-white px-3 flex items-center font-bold text-[10px]" style="width: 75%;">Calificación de Procesos, Estabilidad & Trazabilidad</div>
+                            </div>
+                        </div>
+                        <!-- Month 6 -->
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-xs">
+                            <div class="w-24 font-bold text-slate-700">Mes 6:</div>
+                            <div class="flex-1 bg-slate-200 rounded-full h-6 w-full overflow-hidden flex">
+                                <div class="bg-emerald-500 text-slate-950 px-3 flex items-center font-bold text-[10px]" style="width: 100%;">Auditoría Final & Emisión de Certificado BPM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-velozia-darkblue text-slate-400 py-6 border-t border-slate-800 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3 flex-wrap">
+                <span class="font-bold text-white">VELOZIA CONSULTING GROUP</span>
+                <span class="text-slate-500">&amp;</span>
+                <span class="font-bold text-emerald-400">CIRADSA S.A.</span>
+                <span class="text-slate-500">|</span>
+                <span>Estrategia, Regulación & Operaciones Sanitarias</span>
+            </div>
+            <div>
+                Documento confidencial preparado exclusivamente para la directiva de <span class="text-white font-semibold">SOLCA Matriz Guayaquil</span>.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Tab switching logic
+        function switchTab(tabId) {
+            const tabs = ['resumen', 'friccion', 'viernes', 'mesa', 'velozia'];
+            tabs.forEach(t => {
+                const content = document.getElementById('content-' + t);
+                const button = document.getElementById('tab-' + t);
+                if (t === tabId) {
+                    content.classList.remove('hidden');
+                    button.classList.add('active-tab');
+                    button.classList.remove('text-blue-200');
+                    button.classList.add('text-white');
+                } else {
+                    content.classList.add('hidden');
+                    button.classList.remove('active-tab');
+                    button.classList.add('text-blue-200');
+                    button.classList.remove('text-white');
+                }
+            });
+        }
+
+        // Chart.js & Radioactivity Calculator Logic
+        let decayChartInstance = null;
+
+        function initChart() {
+            const ctx = document.getElementById('decayChart').getContext('2d');
+            decayChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['0h', '1h', '2h', '3h', '4h', '5h', '6h'],
+                    datasets: [{
+                        label: 'Actividad (mCi)',
+                        data: [500, 342, 233, 159, 108, 74, 50],
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#10B981',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#94A3B8', font: { size: 10 } },
+                            grid: { color: '#334155' }
+                        },
+                        y: {
+                            ticks: { color: '#94A3B8', font: { size: 10 } },
+                            grid: { color: '#334155' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function calculateDecay() {
+            const A0 = parseFloat(document.getElementById('initialActivity').value) || 500;
+            const tHours = parseFloat(document.getElementById('timeHours').value);
+            document.getElementById('selectedHoursText').innerText = tHours.toFixed(1) + ' horas';
+
+            // Half-life of 18F = 109.77 minutes = 1.8295 hours
+            const halfLifeHours = 1.8295;
+            const decayConstant = Math.LN2 / halfLifeHours;
+            const At = A0 * Math.exp(-decayConstant * tHours);
+            const percentage = (At / A0) * 100;
+
+            document.getElementById('remainingActivityText').innerText = At.toFixed(1) + ' mCi';
+            document.getElementById('decayPercentageText').innerHTML = 'Conserva el <span class="text-emerald-300 font-bold">' + percentage.toFixed(1) + '%</span> de la actividad inicial.';
+
+            // Update Chart Dataset
+            const chartData = [];
+            for (let h = 0; h <= 6; h += 1) {
+                chartData.push(parseFloat((A0 * Math.exp(-decayConstant * h)).toFixed(1)));
+            }
+
+            if (decayChartInstance) {
+                decayChartInstance.data.datasets[0].data = chartData;
+                decayChartInstance.update();
+            }
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initChart();
+            document.getElementById('timeHours').addEventListener('input', calculateDecay);
+            calculateDecay();
+        };
+    </script>
+</body>
+</html>
