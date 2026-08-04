@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta CICOG — Sistema de Semaforización de Socios | VELOZIA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue-deep:#0B3A63;
+    --blue-mid:#134D82;
+    --blue-bright:#1E6FD9;
+    --green:#1FA97A;
+    --green-soft:#E4F5EC;
+    --white:#FFFFFF;
+    --ink:#0B1F33;
+    --ink-soft:#4A5C6E;
+    --paper:#F4F8FB;
+    --line:#DCE6EF;
+    --sem-green:#2FB673;
+    --sem-yellow:#F2B705;
+    --sem-red:#E2492D;
+    --radius:14px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  body{
+    margin:0;
+    font-family:'Inter', sans-serif;
+    color:var(--ink);
+    background:var(--white);
+    line-height:1.55;
+  }
+
+  h1,h2,h3,.font-display{
+    font-family:'Space Grotesk', sans-serif;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+
+  .mono{font-family:'JetBrains Mono', monospace;}
+
+  a{color:inherit;}
+
+  .wrap{
+    max-width:1040px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  @media (max-width:640px){
+    .wrap{padding:0 20px;}
+  }
+
+  button{font-family:inherit;}
+
+  :focus-visible{
+    outline:3px solid var(--blue-bright);
+    outline-offset:3px;
+  }
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(255,255,255,0.9);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1040px;
+    margin:0 auto;
+    padding:14px 32px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .nav-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    color:var(--blue-deep);
+  }
+  .nav-brand img{height:26px; width:auto; display:block;}
+  .nav-links{display:flex; gap:26px; font-size:14px; font-weight:500;}
+  .nav-links a{
+    color:var(--ink-soft);
+    text-decoration:none;
+    transition:color .15s ease;
+  }
+  .nav-links a:hover{color:var(--blue-deep);}
+  @media (max-width:640px){ .nav-links{display:none;} }
+
+  /* ---------- COVER ---------- */
+  .cover{
+    position:relative;
+    min-height:92vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    background:
+      radial-gradient(1100px 550px at 85% -10%, rgba(31,169,122,0.35), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(30,111,217,0.35), transparent 55%),
+      linear-gradient(160deg, var(--blue-deep) 0%, #0A2E4F 55%, #081F38 100%);
+    color:var(--white);
+    overflow:hidden;
+    padding:56px 0 40px;
+  }
+  .cover::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image:linear-gradient(to bottom, rgba(0,0,0,0.5), transparent 70%);
+    pointer-events:none;
+  }
+  .cover-top{
+    position:relative;
+    z-index:2;
+  }
+  .cover-logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .cover-logo img{
+    height:88px;
+    width:auto;
+    display:block;
+    filter:drop-shadow(0 4px 16px rgba(0,0,0,0.3));
+  }
+  @media (max-width:640px){
+    .cover-logo img{height:64px;}
+  }
+  .cover-logo-text{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:18px;
+    letter-spacing:0.02em;
+  }
+  .cover-mid{
+    position:relative;
+    z-index:2;
+    padding-top:10vh;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.72);
+    margin-bottom:22px;
+  }
+  .eyebrow-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--sem-green);
+    box-shadow:0 0 0 4px rgba(47,182,115,0.25);
+  }
+  .cover h1{
+    font-size:clamp(34px, 5vw, 56px);
+    font-weight:700;
+    line-height:1.06;
+    max-width:820px;
+  }
+  .cover h1 em{
+    font-style:normal;
+    color:var(--sem-green);
+  }
+  .cover p.lede{
+    margin-top:22px;
+    font-size:18px;
+    max-width:560px;
+    color:rgba(255,255,255,0.82);
+    font-weight:400;
+  }
+  .cover-bottom{
+    position:relative;
+    z-index:2;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:16px;
+    font-size:13.5px;
+    color:rgba(255,255,255,0.65);
+    border-top:1px solid rgba(255,255,255,0.15);
+    padding-top:18px;
+    margin-top:40px;
+  }
+  .cover-bottom strong{color:rgba(255,255,255,0.92); font-weight:600;}
+
+  /* ---------- SECTION SCAFFOLDING ---------- */
+  section{
+    padding:96px 0;
+  }
+  section.alt{
+    background:var(--paper);
+  }
+  .section-head{
+    max-width:640px;
+    margin-bottom:52px;
+  }
+  .eyebrow-light{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--blue-bright);
+    margin-bottom:14px;
+    display:block;
+  }
+  .section-head h2{
+    font-size:clamp(26px, 3.4vw, 36px);
+    font-weight:600;
+    line-height:1.18;
+    color:var(--ink);
+  }
+  .section-head p{
+    margin-top:16px;
+    font-size:16.5px;
+    color:var(--ink-soft);
+  }
+
+  @media (max-width:640px){
+    section{padding:64px 0;}
+  }
+
+  /* ---------- PROBLEM CARDS ---------- */
+  .problem-intro{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 28px;
+    margin-bottom:36px;
+    font-size:16px;
+    color:var(--ink-soft);
+  }
+  .problem-intro b{color:var(--ink);}
+
+  .risk-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:20px;
+  }
+  @media (max-width:820px){
+    .risk-grid{grid-template-columns:1fr;}
+  }
+  .risk-card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:28px 24px;
+    position:relative;
+  }
+  .risk-card .tag{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:4px 10px;
+    border-radius:100px;
+    margin-bottom:16px;
+  }
+  .risk-card.r1 .tag{background:#FDEDEA; color:var(--sem-red);}
+  .risk-card.r2 .tag{background:#FEF6E0; color:#A87400;}
+  .risk-card.r3 .tag{background:#E9F1FC; color:var(--blue-bright);}
+  .risk-card h3{
+    font-size:17px;
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  .risk-card p{
+    font-size:14.5px;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
+  /* ---------- SOLUTION / WIDGET ---------- */
+  .solution-layout{
+    display:grid;
+    grid-template-columns:0.9fr 1.1fr;
+    gap:48px;
+    align-items:start;
+  }
+  @media (max-width:900px){
+    .solution-layout{grid-template-columns:1fr;}
+  }
+  .solution-copy p{
+    color:var(--ink-soft);
+    font-size:16px;
+    margin-bottom:18px;
+  }
+  .solution-copy p b{color:var(--ink);}
+
+  .flow-mini{
+    margin-top:28px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .flow-mini-item{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .flow-mini-num{
+    flex:none;
+    width:26px; height:26px;
+    border-radius:50%;
+    background:var(--blue-deep);
+    color:var(--white);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .flow-mini-text{font-size:14.5px; color:var(--ink-soft); padding-top:3px;}
+  .flow-mini-text b{color:var(--ink);}
+
+  /* --- widget --- */
+  .widget{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:20px;
+    box-shadow:0 20px 50px -20px rgba(11,58,99,0.25);
+    overflow:hidden;
+  }
+  .widget-header{
+    background:var(--blue-deep);
+    color:var(--white);
+    padding:18px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .widget-header-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:14.5px;
+  }
+  .widget-header-sub{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:rgba(255,255,255,0.6);
+    margin-top:2px;
+  }
+  .widget-body{padding:24px;}
+
+  .member-card{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding:16px;
+    border-radius:12px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    margin-bottom:18px;
+  }
+  .member-info{display:flex; align-items:center; gap:12px;}
+  .member-avatar{
+    width:42px; height:42px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--blue-bright), var(--blue-deep));
+    color:var(--white);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    flex:none;
+  }
+  .member-name{font-size:14.5px; font-weight:600;}
+  .member-type{font-size:12.5px; color:var(--ink-soft); font-family:'JetBrains Mono', monospace;}
+
+  .semaforo{
+    display:flex;
+    gap:6px;
+    flex:none;
+  }
+  .semaforo i{
+    width:14px; height:14px;
+    border-radius:50%;
+    background:#E4E9EF;
+    display:block;
+    transition:background .25s ease, box-shadow .25s ease, transform .2s ease;
+  }
+  .semaforo i.on-green{background:var(--sem-green); box-shadow:0 0 0 4px rgba(47,182,115,0.18);}
+  .semaforo i.on-yellow{background:var(--sem-yellow); box-shadow:0 0 0 4px rgba(242,183,5,0.2);}
+  .semaforo i.on-red{background:var(--sem-red); box-shadow:0 0 0 4px rgba(226,73,45,0.18);}
+
+  .sim-controls{
+    display:flex;
+    gap:8px;
+    margin-bottom:20px;
+  }
+  .sim-btn{
+    flex:1;
+    padding:10px 8px;
+    border-radius:10px;
+    border:1.5px solid var(--line);
+    background:var(--white);
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    color:var(--ink-soft);
+    transition:all .18s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+  }
+  .sim-btn i{width:9px; height:9px; border-radius:50%; display:block;}
+  .sim-btn[data-state="verde"] i{background:var(--sem-green);}
+  .sim-btn[data-state="amarillo"] i{background:var(--sem-yellow);}
+  .sim-btn[data-state="rojo"] i{background:var(--sem-red);}
+  .sim-btn:hover{border-color:var(--blue-bright); color:var(--ink);}
+  .sim-btn.active{
+    border-color:var(--blue-deep);
+    background:var(--blue-deep);
+    color:var(--white);
+  }
+  .sim-btn.active[data-state="verde"] i{background:var(--sem-green);}
+  .sim-btn.active[data-state="amarillo"] i{background:var(--sem-yellow);}
+  .sim-btn.active[data-state="rojo"] i{background:var(--sem-red);}
+
+  .status-line{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin-bottom:20px;
+    padding:12px 14px;
+    border-radius:10px;
+    background:var(--paper);
+    border-left:3px solid var(--blue-bright);
+    transition:border-color .2s ease;
+  }
+  .status-line b{color:var(--ink);}
+  .status-line.st-verde{border-left-color:var(--sem-green);}
+  .status-line.st-amarillo{border-left-color:var(--sem-yellow);}
+  .status-line.st-rojo{border-left-color:var(--sem-red);}
+
+  .email-preview{
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    opacity:0;
+    max-height:0;
+    transition:opacity .3s ease, max-height .35s ease;
+  }
+  .email-preview.show{
+    opacity:1;
+    max-height:400px;
+  }
+  .email-preview-head{
+    background:var(--white);
+    border-bottom:1px solid var(--line);
+    padding:12px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .email-preview-head-l{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--ink-soft);
+  }
+  .email-badge{
+    font-size:10.5px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    padding:3px 9px;
+    border-radius:100px;
+    background:var(--green-soft);
+    color:var(--green);
+  }
+  .email-preview-body{
+    padding:16px;
+    background:var(--paper);
+    font-size:13.5px;
+    color:var(--ink);
+  }
+  .email-preview-body .subj{font-weight:600; margin-bottom:8px;}
+  .email-preview-body .txt{color:var(--ink-soft); line-height:1.6;}
+  .log-line{
+    margin-top:12px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .log-line .dot{width:6px; height:6px; border-radius:50%; background:var(--green); flex:none;}
+
+  /* ---------- PORTFOLIO DASHBOARD (300 socios) ---------- */
+  .portfolio-card{
+    margin-top:44px;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:20px;
+    box-shadow:0 20px 50px -20px rgba(11,58,99,0.18);
+    padding:30px 30px 26px;
+  }
+  .portfolio-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:22px;
+  }
+  .portfolio-head h3{
+    font-size:16.5px;
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  .portfolio-head p{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin:0;
+  }
+  .illustrative-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    background:#FEF6E0;
+    color:#A87400;
+    padding:5px 11px;
+    border-radius:100px;
+    flex:none;
+  }
+  .portfolio-regen{
+    font-size:13px;
+    font-weight:600;
+    color:var(--blue-deep);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:8px 14px;
+    cursor:pointer;
+    flex:none;
+    transition:border-color .15s ease;
+  }
+  .portfolio-regen:hover{border-color:var(--blue-bright);}
+  .portfolio-stats{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:14px;
+    margin-bottom:24px;
+  }
+  @media (max-width:640px){
+    .portfolio-stats{grid-template-columns:repeat(2, 1fr);}
+  }
+  .pf-stat{
+    border-radius:12px;
+    padding:14px 16px;
+  }
+  .pf-stat.total{background:var(--paper);}
+  .pf-stat.total .lbl{color:var(--ink-soft);}
+  .pf-stat.total .val{color:var(--ink);}
+  .pf-stat.g{background:rgba(47,182,115,0.1);}
+  .pf-stat.g .lbl, .pf-stat.g .val{color:var(--sem-green);}
+  .pf-stat.y{background:rgba(242,183,5,0.14);}
+  .pf-stat.y .lbl, .pf-stat.y .val{color:#A87400;}
+  .pf-stat.r{background:rgba(226,73,45,0.1);}
+  .pf-stat.r .lbl, .pf-stat.r .val{color:var(--sem-red);}
+  .pf-stat.clickable{cursor:pointer; border:1.5px solid transparent; transition:border-color .15s ease, transform .15s ease;}
+  .pf-stat.clickable:hover{transform:translateY(-2px);}
+  .pf-stat.g.clickable:hover{border-color:var(--sem-green);}
+  .pf-stat.y.clickable:hover{border-color:var(--sem-yellow);}
+  .pf-stat.r.clickable:hover{border-color:var(--sem-red);}
+  .pf-stat.active{transform:translateY(-2px);}
+  .pf-stat.g.active{border-color:var(--sem-green); box-shadow:0 6px 16px -8px rgba(47,182,115,0.5);}
+  .pf-stat.y.active{border-color:var(--sem-yellow); box-shadow:0 6px 16px -8px rgba(242,183,5,0.5);}
+  .pf-stat.r.active{border-color:var(--sem-red); box-shadow:0 6px 16px -8px rgba(226,73,45,0.5);}
+  .pf-stat .lbl{font-size:12.5px; margin:0 0 4px; font-weight:600; display:flex; align-items:center; gap:5px; justify-content:space-between;}
+  .pf-stat .val{font-size:22px; font-weight:700; margin:0; font-family:'Space Grotesk', sans-serif;}
+  .pf-stat .hint{
+    font-size:10px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    opacity:0.65;
+  }
+
+  .pf-action-list{
+    display:none;
+    margin-top:22px;
+  }
+  .pf-action-list.show{display:block;}
+  .pf-action-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:12px;
+  }
+  .pf-action-head h4{
+    font-size:14.5px;
+    font-weight:600;
+    margin:0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .pf-action-head h4 .adot{width:11px; height:11px; border-radius:3px; display:block;}
+  .pf-action-head h4 .adot.y{background:var(--sem-yellow);}
+  .pf-action-head h4 .adot.r{background:var(--sem-red);}
+  .pf-action-clear{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    background:none;
+    border:none;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  .pf-action-clear:hover{color:var(--ink);}
+  .pf-action-rows{
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    max-height:320px;
+    overflow-y:auto;
+  }
+  .pf-action-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:12px 14px;
+    border-bottom:1px solid var(--line);
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  .pf-action-row:last-child{border-bottom:none;}
+  .pf-action-row:hover{background:var(--paper);}
+  .pf-action-row .arow-l{display:flex; align-items:center; gap:11px;}
+  .pf-action-row .arow-dot{width:9px; height:9px; border-radius:50%; flex:none;}
+  .pf-action-row .arow-dot.y{background:var(--sem-yellow);}
+  .pf-action-row .arow-dot.r{background:var(--sem-red);}
+  .pf-action-row .arow-name{font-size:13.8px; font-weight:600; color:var(--ink);}
+  .pf-action-row .arow-type{font-size:11.5px; color:var(--ink-soft); font-family:'JetBrains Mono', monospace;}
+  .pf-action-row .arow-cta{
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--blue-bright);
+    font-family:'JetBrains Mono', monospace;
+  }
+
+  .pf-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(15px, 1fr));
+    gap:4px;
+    margin-bottom:22px;
+  }
+  .pf-sq{
+    aspect-ratio:1/1;
+    border-radius:3px;
+    transition:transform .1s ease;
+  }
+  .pf-sq:hover{transform:scale(1.25);}
+  .pf-sq.g{background:var(--sem-green);}
+  .pf-sq.y{background:var(--sem-yellow);}
+  .pf-sq.r{background:var(--sem-red);}
+
+  .pf-legend{
+    display:flex;
+    gap:22px;
+    flex-wrap:wrap;
+    font-size:13px;
+    color:var(--ink-soft);
+    padding-top:18px;
+    border-top:1px solid var(--line);
+  }
+  .pf-legend span{display:flex; align-items:center; gap:7px;}
+  .pf-legend i{width:10px; height:10px; border-radius:3px; display:block;}
+  .pf-legend .g i{background:var(--sem-green);}
+  .pf-legend .y i{background:var(--sem-yellow);}
+  .pf-legend .r i{background:var(--sem-red);}
+  .pf-note{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:14px;
+  }
+  .pf-note b{color:var(--ink);}
+
+  .pf-search-wrap{
+    position:relative;
+    margin-bottom:20px;
+  }
+  .pf-search{
+    width:100%;
+    padding:11px 14px 11px 40px;
+    border-radius:10px;
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    color:var(--ink);
+  }
+  .pf-search:focus{
+    outline:none;
+    border-color:var(--blue-bright);
+    background:var(--white);
+  }
+  .pf-search-icon{
+    position:absolute;
+    left:13px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--ink-soft);
+    pointer-events:none;
+  }
+  .pf-results{
+    position:absolute;
+    left:0; right:0; top:calc(100% + 6px);
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:0 14px 30px -12px rgba(11,58,99,0.25);
+    overflow:hidden;
+    z-index:10;
+    display:none;
+  }
+  .pf-results.show{display:block;}
+  .pf-result-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:11px 14px;
+    cursor:pointer;
+    font-size:13.5px;
+    border-bottom:1px solid var(--line);
+    transition:background .12s ease;
+  }
+  .pf-result-item:last-child{border-bottom:none;}
+  .pf-result-item:hover, .pf-result-item:focus{background:var(--paper);}
+  .pf-result-item .rname{font-weight:600; color:var(--ink);}
+  .pf-result-item .rmeta{font-size:11.5px; color:var(--ink-soft); font-family:'JetBrains Mono', monospace;}
+  .pf-result-dot{width:9px; height:9px; border-radius:50%; flex:none;}
+  .pf-result-dot.g{background:var(--sem-green);}
+  .pf-result-dot.y{background:var(--sem-yellow);}
+  .pf-result-dot.r{background:var(--sem-red);}
+  .pf-no-results{padding:14px; font-size:13px; color:var(--ink-soft); text-align:center;}
+
+  .pf-sq.pf-sq-hit{
+    outline:2.5px solid var(--blue-deep);
+    outline-offset:1px;
+    transform:scale(1.35);
+    z-index:2;
+    position:relative;
+  }
+
+  .pf-detail{
+    display:none;
+    margin-top:22px;
+    padding-top:22px;
+    border-top:1px solid var(--line);
+  }
+  .pf-detail.show{display:block;}
+  .pf-detail-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:20px;
+  }
+  .pf-detail-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom:16px;
+  }
+  .pf-detail-info{display:flex; align-items:center; gap:12px;}
+  .pf-detail-avatar{
+    width:42px; height:42px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--blue-bright), var(--blue-deep));
+    color:var(--white);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    flex:none;
+  }
+  .pf-detail-name{font-size:14.5px; font-weight:600;}
+  .pf-detail-type{font-size:12.5px; color:var(--ink-soft); font-family:'JetBrains Mono', monospace;}
+
+  /* ---------- BENEFITS ---------- */
+  .benefit-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:18px;
+  }
+  @media (max-width:820px){
+    .benefit-grid{grid-template-columns:repeat(2, 1fr);}
+  }
+  @media (max-width:560px){
+    .benefit-grid{grid-template-columns:1fr;}
+  }
+  .benefit-card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:24px 22px;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .benefit-card:hover{border-color:var(--blue-bright); transform:translateY(-2px);}
+  .benefit-icon{
+    width:38px; height:38px;
+    border-radius:10px;
+    background:var(--green-soft);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:16px;
+  }
+  .benefit-icon svg{width:19px; height:19px; stroke:var(--green);}
+  .benefit-card h3{font-size:15.5px; font-weight:600; margin-bottom:8px;}
+  .benefit-card p{font-size:13.8px; color:var(--ink-soft); margin:0;}
+
+  /* ---------- FLOW / HOW ---------- */
+  .flow-list{
+    display:flex;
+    flex-direction:column;
+  }
+  .flow-row{
+    display:grid;
+    grid-template-columns:64px 1fr;
+    gap:20px;
+    padding:26px 0;
+    border-top:1px solid var(--line);
+  }
+  .flow-row:last-child{border-bottom:1px solid var(--line);}
+  .flow-index{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--blue-bright);
+    padding-top:2px;
+  }
+  .flow-row h3{font-size:16.5px; font-weight:600; margin-bottom:6px;}
+  .flow-row p{font-size:14.5px; color:var(--ink-soft); margin:0; max-width:560px;}
+  .flow-row .note{
+    display:inline-block;
+    margin-top:10px;
+    font-size:12px;
+    font-family:'JetBrains Mono', monospace;
+    color:#A87400;
+    background:#FEF6E0;
+    padding:4px 10px;
+    border-radius:100px;
+  }
+
+  /* ---------- SCOPE NOTE ---------- */
+  .scope-box{
+    background:var(--blue-deep);
+    color:var(--white);
+    border-radius:20px;
+    padding:36px 32px;
+    margin-top:20px;
+  }
+  .scope-box h3{
+    font-size:18px;
+    font-weight:600;
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .scope-box ul{
+    margin:0;
+    padding-left:20px;
+    color:rgba(255,255,255,0.8);
+    font-size:14.5px;
+  }
+  .scope-box li{margin-bottom:8px;}
+  .scope-box li:last-child{margin-bottom:0;}
+
+  /* ---------- CTA ---------- */
+  .cta{
+    background:linear-gradient(135deg, var(--blue-deep), #0A2E4F);
+    border-radius:24px;
+    padding:56px 40px;
+    text-align:center;
+    color:var(--white);
+    position:relative;
+    overflow:hidden;
+  }
+  .cta::before{
+    content:"";
+    position:absolute;
+    width:400px; height:400px;
+    background:radial-gradient(circle, rgba(31,169,122,0.35), transparent 65%);
+    top:-160px; right:-120px;
+  }
+  .cta-inner{position:relative; z-index:2;}
+  .cta h2{
+    font-size:clamp(24px,3vw,32px);
+    font-weight:600;
+    max-width:520px;
+    margin:0 auto 14px;
+  }
+  .cta p{
+    color:rgba(255,255,255,0.75);
+    font-size:15.5px;
+    max-width:480px;
+    margin:0 auto 28px;
+  }
+  .cta-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--green);
+    color:var(--white);
+    font-weight:600;
+    font-size:15px;
+    padding:14px 28px;
+    border-radius:100px;
+    text-decoration:none;
+    border:none;
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .cta-btn:hover{transform:translateY(-2px); box-shadow:0 10px 24px -8px rgba(31,169,122,0.6);}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding:40px 0 50px;
+    border-top:1px solid var(--line);
+  }
+  .footer-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:14px;
+  }
+  .footer-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    color:var(--blue-deep);
+  }
+  .footer-brand img{height:22px;}
+  footer .meta{font-size:12.5px; color:var(--ink-soft);}
+
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <img src="https://res.cloudinary.com/dgdvr53zp/image/upload/v1782710603/Gemini_Generated_Image_dzrmo0dzrmo0dzrm_xl7x5a.png" alt="VELOZIA" referrerpolicy="no-referrer" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('span'),{textContent:'VELOZIA',style:'font-family:Space Grotesk,sans-serif;font-weight:700;letter-spacing:.02em'}))">
+    </div>
+    <div class="nav-links">
+      <a href="#problema">El problema</a>
+      <a href="#solucion">La solución</a>
+      <a href="#beneficios">Beneficios</a>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#siguientes-pasos">Próximos pasos</a>
+    </div>
+  </div>
+</nav>
+
+<header class="cover">
+  <div class="wrap cover-top">
+    <div class="cover-logo">
+      <img src="https://res.cloudinary.com/dgdvr53zp/image/upload/v1782710603/Gemini_Generated_Image_dzrmo0dzrmo0dzrm_xl7x5a.png" alt="Logo VELOZIA" referrerpolicy="no-referrer" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('span'),{textContent:'VELOZIA',style:'font-family:Space Grotesk,sans-serif;font-weight:700;letter-spacing:.02em'}))">
+    </div>
+  </div>
+  <div class="wrap cover-mid">
+    <span class="eyebrow"><span class="eyebrow-dot"></span> Propuesta técnica y funcional</span>
+    <h1>Un semáforo que avisa <em>antes</em> de que un socio pierda su seguro.</h1>
+    <p class="lede">Sistema de semaforización y notificación automática de cartera, diseñado para el Colegio de Ingenieros Comerciales del Guayas.</p>
+  </div>
+  <div class="wrap cover-bottom">
+    <div>Preparado para <strong>CICOG</strong> — Colegio de Ingenieros Comerciales del Guayas</div>
+    <div>Presentado por <strong>VELOZIA</strong> · Soluciones en la nube</div>
+  </div>
+</header>
+
+<section id="problema">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow-light">El reto operativo actual</span>
+      <h2>Hoy, la cobertura de un socio depende de que nadie se equivoque</h2>
+    </div>
+
+    <div class="problem-intro">
+      El seguro de los socios activos y vitalicios está directamente ligado a su estado de pago: un socio con
+      <b>dos meses de mora</b> conserva su cobertura, pero al llegar a <b>tres meses</b> la pierde. Hoy, detectar
+      en qué punto está cada socio y avisarle a tiempo es un proceso manual, revisado uno por uno.
+    </div>
+
+    <div class="risk-grid">
+      <div class="risk-card r1">
+        <span class="tag">Riesgo para el socio</span>
+        <h3>Un aviso que puede llegar tarde</h3>
+        <p>Con el volumen de socios que hay que revisar cada mes, es fácil que a alguno se le notifique tarde o se le pase por alto — y eso significa quedarse sin cobertura sin haber tenido oportunidad de reaccionar.</p>
+      </div>
+      <div class="risk-card r2">
+        <span class="tag">Riesgo para el CICOG</span>
+        <h3>Sin respaldo centralizado</h3>
+        <p>El aviso se envía, pero no queda registrado en un solo lugar con fecha y hora. Ante un socio que reclama no haber sido notificado, hoy es difícil demostrar rápidamente que sí se cumplió.</p>
+      </div>
+      <div class="risk-card r3">
+        <span class="tag">Riesgo operativo</span>
+        <h3>Depende de una sola persona</h3>
+        <p>Todo el proceso descansa en que alguien lo haga bien, cada mes, con cada socio. A medida que crece el gremio, sostenerlo de forma confiable solo con revisión manual es cada vez más difícil.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="solucion" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow-light">La solución propuesta</span>
+      <h2>Un dashboard que vigila la cartera, para que nadie tenga que hacerlo manualmente</h2>
+    </div>
+
+    <div class="solution-layout">
+      <div class="solution-copy">
+        <p>Un tablero muestra a <b>cada socio</b> —activo o vitalicio— en verde, amarillo o rojo según su situación
+        de pago. En el momento en que un socio entra en zona de alerta, el sistema <b>envía automáticamente</b>
+        un correo predefinido, sin que nadie tenga que revisarlo ni redactarlo.</p>
+        <p>El socio recibe su aviso, responde con el comprobante cuando paga, y el equipo del CICOG
+        confirma el pago con un clic — el sistema se encarga de que cada paso quede registrado y de
+        que la alerta llegue siempre, a tiempo.</p>
+
+        <div class="flow-mini">
+          <div class="flow-mini-item">
+            <div class="flow-mini-num">1</div>
+            <div class="flow-mini-text"><b>El semáforo cambia</b> según el saldo del socio.</div>
+          </div>
+          <div class="flow-mini-item">
+            <div class="flow-mini-num">2</div>
+            <div class="flow-mini-text"><b>Se dispara el correo</b> automáticamente, sin intervención manual.</div>
+          </div>
+          <div class="flow-mini-item">
+            <div class="flow-mini-num">3</div>
+            <div class="flow-mini-text"><b>Queda registrado</b> — fecha, hora y contenido — como respaldo del CICOG.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="widget">
+        <div class="widget-header">
+          <div>
+            <div class="widget-header-title">Panel de socios · Simulación</div>
+            <div class="widget-header-sub">CICOG — vista de ejemplo</div>
+          </div>
+          <div class="semaforo" id="semaforoHeader">
+            <i class="dot-g"></i><i class="dot-y"></i><i class="dot-r"></i>
+          </div>
+        </div>
+        <div class="widget-body">
+
+          <div class="member-card">
+            <div class="member-info">
+              <div class="member-avatar">MC</div>
+              <div>
+                <div class="member-name">Ing. Mariela Castro</div>
+                <div class="member-type">Socia activa</div>
+              </div>
+            </div>
+            <div class="semaforo" id="semaforoCard">
+              <i class="dot-g"></i><i class="dot-y"></i><i class="dot-r"></i>
+            </div>
+          </div>
+
+          <div class="sim-controls">
+            <button class="sim-btn" data-state="verde"><i></i>Verde</button>
+            <button class="sim-btn" data-state="amarillo"><i></i>Amarillo</button>
+            <button class="sim-btn" data-state="rojo"><i></i>Rojo</button>
+          </div>
+
+          <div class="status-line" id="statusLine">
+            Seleccione un estado para ver cómo reacciona el sistema.
+          </div>
+
+          <div class="email-preview" id="emailPreview">
+            <div class="email-preview-head">
+              <span class="email-preview-head-l">Correo generado por el sistema</span>
+              <span class="email-badge">Enviado</span>
+            </div>
+            <div class="email-preview-body">
+              <div class="subj" id="emailSubj">—</div>
+              <div class="txt" id="emailTxt">—</div>
+              <div class="log-line"><span class="dot"></span><span id="logTxt">—</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="portfolio-card">
+      <div class="portfolio-head">
+        <div>
+          <h3>Así se vería con toda la cartera de socios</h3>
+          <p>Cada cuadro representa un socio, coloreado según su estado de pago.</p>
+        </div>
+        <span class="illustrative-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Vista ilustrativa · datos de ejemplo
+        </span>
+      </div>
+
+      <div class="portfolio-stats">
+        <div class="pf-stat total">
+          <p class="lbl">Total socios</p>
+          <p class="val" id="pfTotal">300</p>
+        </div>
+        <div class="pf-stat g">
+          <p class="lbl">Al día</p>
+          <p class="val" id="pfVerde">0</p>
+        </div>
+        <div class="pf-stat y clickable" id="pfStatY" role="button" tabindex="0">
+          <p class="lbl">Zona de alerta <span class="hint">ver ›</span></p>
+          <p class="val" id="pfAmarillo">0</p>
+        </div>
+        <div class="pf-stat r clickable" id="pfStatR" role="button" tabindex="0">
+          <p class="lbl">Sin cobertura <span class="hint">ver ›</span></p>
+          <p class="val" id="pfRojo">0</p>
+        </div>
+      </div>
+
+      <div class="pf-search-wrap">
+        <svg class="pf-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="pf-search" id="pfSearch" type="text" placeholder="Buscar socio por nombre o número..." autocomplete="off">
+        <div class="pf-results" id="pfResults"></div>
+      </div>
+
+      <div class="pf-grid" id="pfGrid" role="img" aria-label="Cuadrícula de 300 socios coloreados según su estado de mora"></div>
+
+      <div class="pf-legend">
+        <span class="g"><i></i>Verde — al día</span>
+        <span class="y"><i></i>Amarillo — correo automático de alerta</span>
+        <span class="r"><i></i>Rojo — seguro suspendido, correo formal</span>
+      </div>
+
+      <p class="pf-note">Correos que el sistema dispara automáticamente en esta simulación: <b id="pfCorreos">0</b> (socios en amarillo + rojo).</p>
+
+      <div class="pf-action-list" id="pfActionList">
+        <div class="pf-action-head">
+          <h4 id="pfActionTitle"><span class="adot y"></span>Socios en zona de alerta</h4>
+          <button class="pf-action-clear" id="pfActionClear">Ver toda la cartera</button>
+        </div>
+        <div class="pf-action-rows" id="pfActionRows"></div>
+      </div>
+
+      <div class="pf-detail" id="pfDetail">
+        <div class="pf-detail-card">
+          <div class="pf-detail-top">
+            <div class="pf-detail-info">
+              <div class="pf-detail-avatar" id="pfDetailAvatar">—</div>
+              <div>
+                <div class="pf-detail-name" id="pfDetailName">—</div>
+                <div class="pf-detail-type" id="pfDetailType">—</div>
+              </div>
+            </div>
+            <div class="semaforo" id="pfDetailDots">
+              <i class="dot-g"></i><i class="dot-y"></i><i class="dot-r"></i>
+            </div>
+          </div>
+          <div class="status-line" id="pfDetailStatusLine">—</div>
+          <div class="email-preview" id="pfDetailEmail">
+            <div class="email-preview-head">
+              <span class="email-preview-head-l">Correo generado por el sistema</span>
+              <span class="email-badge">Enviado</span>
+            </div>
+            <div class="email-preview-body">
+              <div class="subj" id="pfDetailSubj">—</div>
+              <div class="txt" id="pfDetailTxt">—</div>
+              <div class="log-line"><span class="dot"></span><span id="pfDetailLog">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="portfolio-regen" id="pfRegen">↻ Generar otra simulación</button>
+    </div>
+  </div>
+</section>
+
+<section id="beneficios">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow-light">Lo que esto le da al CICOG</span>
+      <h2>Beneficios directos para la operación</h2>
+    </div>
+
+    <div class="benefit-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <h3>Nadie pierde cobertura por falta de aviso</h3>
+        <p>El sistema notifica automáticamente y a tiempo, todos los meses, sin depender de que alguien recuerde hacerlo.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <h3>Registro trazable de cada notificación</h3>
+        <p>Fecha y hora de cada envío, disponible como respaldo del Colegio ante cualquier reclamo.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <h3>Menos tiempo revisando saldos</h3>
+        <p>El equipo deja la revisión manual atrás y se enfoca en atender a los socios directamente.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h6m0 0a4 4 0 1 0 8 0m-8 0a4 4 0 1 1 8 0m6 0h-6"/></svg></div>
+        <h3>Acceso desde la nube</h3>
+        <p>Información consultable desde cualquier lugar y dispositivo, sin depender de estar en la oficina.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
+        <h3>Historial de comportamiento de pago</h3>
+        <p>Cada socio conserva su trayectoria de pagos, útil tanto para decisiones internas como para respaldo ante disputas.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>Crece con el gremio</h3>
+        <p>El sistema mantiene la misma precisión aunque aumente el número de socios, sin sumar más personas al proceso.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <h3>Reactivación ágil del seguro</h3>
+        <p>Cuando el socio paga y envía su comprobante, el equipo confirma con un clic y su cobertura se restituye de inmediato, con aviso automático de vuelta al socio.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="como-funciona" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow-light">Un ciclo completo, de la alerta a la reactivación</span>
+      <h2>Cómo funciona, en términos simples</h2>
+    </div>
+
+    <div class="flow-list">
+      <div class="flow-row">
+        <div class="flow-index">01</div>
+        <div>
+          <h3>El sistema revisa el saldo de cada socio</h3>
+          <p>De forma automática, sin que nadie tenga que abrir un archivo ni cruzar reportes manualmente.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-index">02</div>
+        <div>
+          <h3>El socio cambia de color según su situación</h3>
+          <p>Verde, amarillo o rojo — un vistazo al tablero basta para saber quién necesita atención.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-index">03</div>
+        <div>
+          <h3>Se envía el aviso automáticamente</h3>
+          <p>Con un texto predefinido, en el momento en que el socio entra en zona de alerta — sin que nadie tenga que redactarlo ni recordarlo.</p>
+          <span class="note">Momento exacto de disparo: a definir con el equipo operativo</span>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-index">04</div>
+        <div>
+          <h3>El socio responde con su comprobante de pago</h3>
+          <p>Al mismo correo del aviso. El sistema lee el comprobante y presenta los datos al equipo del CICOG, listos para revisar.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-index">05</div>
+        <div>
+          <h3>El equipo confirma el pago con un clic</h3>
+          <p>Desde el mismo tablero, junto al socio. La decisión final siempre queda en manos del CICOG — y queda registrada: quién aprobó y cuándo.</p>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-index">06</div>
+        <div>
+          <h3>El socio vuelve a verde y recibe su confirmación</h3>
+          <p>El estado se actualiza y se envía un correo de cierre avisándole que su cobertura fue restituida. El ciclo queda completo, sin cabos sueltos.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="scope-box">
+      <h3>Antes de construir: definiciones que cerramos junto al CICOG</h3>
+      <ul>
+        <li><b>Umbrales exactos de cada color</b> (a cuántos días o meses de mora corresponde amarillo y rojo) — se definen junto al equipo que conoce la operación día a día.</li>
+        <li><b>Origen del saldo de los socios</b> — el sistema se conecta a la fuente donde el CICOG registra hoy los pagos; el grado de automatización depende de cómo esté disponible esa información.</li>
+        <li><b>Contenido definitivo de los correos</b> (aviso y confirmación de pago) — se redactan y aprueban antes de la puesta en marcha.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="siguientes-pasos">
+  <div class="wrap">
+    <div class="cta">
+      <div class="cta-inner">
+        <h2>Conversemos los próximos pasos</h2>
+        <p>Con estas definiciones cerradas, VELOZIA puede avanzar con el diseño funcional detallado y un cronograma de implementación para el CICOG.</p>
+        <a class="cta-btn" href="#" onclick="return false;">
+          Agendar conversación
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <img src="https://res.cloudinary.com/dgdvr53zp/image/upload/v1782710603/Gemini_Generated_Image_dzrmo0dzrmo0dzrm_xl7x5a.png" alt="VELOZIA" referrerpolicy="no-referrer" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('span'),{textContent:'VELOZIA',style:'font-family:Space Grotesk,sans-serif;font-weight:700;letter-spacing:.02em'}))">
+    </div>
+    <div class="meta">Propuesta preparada para CICOG · Colegio de Ingenieros Comerciales del Guayas</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var buttons = document.querySelectorAll('.sim-btn');
+  var cardDots = document.querySelectorAll('#semaforoCard i');
+  var headerDots = document.querySelectorAll('#semaforoHeader i');
+  var statusLine = document.getElementById('statusLine');
+  var emailPreview = document.getElementById('emailPreview');
+  var emailSubj = document.getElementById('emailSubj');
+  var emailTxt = document.getElementById('emailTxt');
+  var logTxt = document.getElementById('logTxt');
+
+  var content = {
+    verde: {
+      cls: 'on-green',
+      status: '<b>Al día.</b> El socio conserva su cobertura de seguro sin novedad. No se genera ningún envío.',
+      showEmail: false
+    },
+    amarillo: {
+      cls: 'on-yellow',
+      status: '<b>Zona de alerta.</b> El socio se acerca al límite. El sistema dispara automáticamente un correo preventivo.',
+      showEmail: true,
+      subj: 'Aviso: regulariza tu cuenta para conservar tu cobertura',
+      txt: 'Estimado(a) socio(a): hemos detectado que tu cuenta presenta un saldo pendiente. Te recordamos que, al llegar a tres meses de mora, la cobertura de tu seguro queda suspendida. Escríbenos y con gusto te enviamos tu estado de cuenta.',
+      log: 'Notificación registrada — 04/08/2026, 09:14'
+    },
+    rojo: {
+      cls: 'on-red',
+      status: '<b>Cobertura suspendida.</b> El socio superó el límite de mora y perdió el beneficio del seguro. Se envía el aviso formal.',
+      showEmail: true,
+      subj: 'Tu cobertura de seguro ha sido suspendida por mora',
+      txt: 'Estimado(a) socio(a): tu cuenta ha superado los tres meses de mora, por lo que tu cobertura de seguro ha quedado suspendida según el reglamento vigente. Contáctanos para conocer tu estado de cuenta y las opciones para regularizar tu situación.',
+      log: 'Notificación registrada — 04/08/2026, 09:14'
+    }
+  };
+
+  function setState(state){
+    buttons.forEach(function(b){
+      b.classList.toggle('active', b.dataset.state === state);
+    });
+
+    [cardDots, headerDots].forEach(function(group){
+      group.forEach(function(dot){ dot.className = dot.className.replace(/on-(green|yellow|red)/g, '').trim(); });
+    });
+
+    var data = content[state];
+    var dotClass = data.cls;
+    var order = ['on-green', 'on-yellow', 'on-red'];
+
+    [cardDots, headerDots].forEach(function(group){
+      order.forEach(function(cls, i){
+        if(cls === dotClass){ group[i].classList.add(cls); }
+      });
+    });
+
+    statusLine.innerHTML = data.status;
+    statusLine.className = 'status-line st-' + state;
+
+    if(data.showEmail){
+      emailSubj.textContent = data.subj;
+      emailTxt.textContent = data.txt;
+      logTxt.textContent = data.log;
+      emailPreview.classList.add('show');
+    } else {
+      emailPreview.classList.remove('show');
+    }
+  }
+
+  buttons.forEach(function(b){
+    b.addEventListener('click', function(){ setState(b.dataset.state); });
+  });
+
+  // estado inicial
+  setState('amarillo');
+})();
+
+(function(){
+  var grid = document.getElementById('pfGrid');
+  var regenBtn = document.getElementById('pfRegen');
+  var searchInput = document.getElementById('pfSearch');
+  var resultsBox = document.getElementById('pfResults');
+  var detailBox = document.getElementById('pfDetail');
+
+  var N = 300;
+  var weights = [0.66, 0.21, 0.13]; // verde, amarillo, rojo — proporción ilustrativa
+  var nombres = ["Mariela","Carlos","Andrea","Luis","Gabriela","Jorge","Daniela","Fernando","Paola","Ricardo","Verónica","Miguel","Cristina","Pedro","Lorena","Xavier","Karina","Diego","Sofía","Andrés","Patricia","Iván","Adriana","Manuel"];
+  var apellidos = ["Castro","Vera","Salazar","Mendoza","Torres","Chávez","Loor","Zambrano","Cedeño","Villacís","Andrade","Peña","Rosales","Cevallos","Bravo","Intriago","Suárez","Macías","Ponce","Robles"];
+
+  var members = [];
+  var squares = [];
+
+  var content = {
+    verde: {
+      status: '<b>Al día.</b> Este socio conserva su cobertura de seguro sin novedad.',
+      showEmail: false
+    },
+    amarillo: {
+      status: '<b>Zona de alerta.</b> Este socio se acerca al límite de mora. El sistema disparó un correo preventivo.',
+      showEmail: true,
+      subj: 'Aviso: regulariza tu cuenta para conservar tu cobertura',
+      txt: 'Estimado(a) socio(a): hemos detectado que tu cuenta presenta un saldo pendiente. Te recordamos que, al llegar a tres meses de mora, la cobertura de tu seguro queda suspendida. Escríbenos y con gusto te enviamos tu estado de cuenta.',
+      log: 'Notificación registrada — 04/08/2026, 09:14'
+    },
+    rojo: {
+      status: '<b>Cobertura suspendida.</b> Este socio superó el límite de mora y perdió el beneficio del seguro.',
+      showEmail: true,
+      subj: 'Tu cobertura de seguro ha sido suspendida por mora',
+      txt: 'Estimado(a) socio(a): tu cuenta ha superado los tres meses de mora, por lo que tu cobertura de seguro ha quedado suspendida según el reglamento vigente. Contáctanos para conocer tu estado de cuenta y las opciones para regularizar tu situación.',
+      log: 'Notificación registrada — 04/08/2026, 09:14'
+    }
+  };
+
+  function randomName(){
+    var n = nombres[Math.floor(Math.random() * nombres.length)];
+    var a = apellidos[Math.floor(Math.random() * apellidos.length)];
+    return n + ' ' + a;
+  }
+
+  function initials(name){
+    var parts = name.split(' ');
+    return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+  }
+
+  function render(){
+    grid.innerHTML = '';
+    members = [];
+    squares = [];
+    detailBox.classList.remove('show');
+    searchInput.value = '';
+    resultsBox.classList.remove('show');
+
+    var cV = 0, cA = 0, cR = 0;
+    var fragment = document.createDocumentFragment();
+
+    for(var i = 1; i <= N; i++){
+      var r = Math.random();
+      var status;
+      if(r < weights[0]){ status = 'verde'; cV++; }
+      else if(r < weights[0] + weights[1]){ status = 'amarillo'; cA++; }
+      else { status = 'rojo'; cR++; }
+
+      var name = randomName();
+      var type = Math.random() < 0.75 ? 'Socio activo' : 'Socio vitalicio';
+      var member = { id: i, name: name, type: type, status: status };
+      members.push(member);
+
+      var sq = document.createElement('div');
+      var cls = status === 'verde' ? 'g' : (status === 'amarillo' ? 'y' : 'r');
+      sq.className = 'pf-sq ' + cls;
+      sq.title = 'Socio #' + i + ' — ' + name;
+      fragment.appendChild(sq);
+      squares.push(sq);
+    }
+
+    grid.appendChild(fragment);
+    document.getElementById('pfVerde').textContent = cV;
+    document.getElementById('pfAmarillo').textContent = cA;
+    document.getElementById('pfRojo').textContent = cR;
+    document.getElementById('pfCorreos').textContent = cA + cR;
+  }
+
+  function showDetail(member){
+    squares.forEach(function(sq){ sq.classList.remove('pf-sq-hit'); });
+    var sq = squares[member.id - 1];
+    sq.classList.add('pf-sq-hit');
+    sq.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    document.getElementById('pfDetailAvatar').textContent = initials(member.name);
+    document.getElementById('pfDetailName').textContent = member.name;
+    document.getElementById('pfDetailType').textContent = member.type + ' · #' + member.id;
+
+    var order = ['on-green', 'on-yellow', 'on-red'];
+    var dotClass = member.status === 'verde' ? 'on-green' : (member.status === 'amarillo' ? 'on-yellow' : 'on-red');
+    var dots = document.querySelectorAll('#pfDetailDots i');
+    dots.forEach(function(d){ d.className = d.className.replace(/on-(green|yellow|red)/g, '').trim(); });
+    order.forEach(function(cls, idx){ if(cls === dotClass){ dots[idx].classList.add(cls); } });
+
+    var data = content[member.status];
+    var statusLine = document.getElementById('pfDetailStatusLine');
+    statusLine.innerHTML = data.status;
+    statusLine.className = 'status-line st-' + member.status;
+
+    var emailPreview = document.getElementById('pfDetailEmail');
+    if(data.showEmail){
+      document.getElementById('pfDetailSubj').textContent = data.subj;
+      document.getElementById('pfDetailTxt').textContent = data.txt;
+      document.getElementById('pfDetailLog').textContent = data.log;
+      emailPreview.classList.add('show');
+    } else {
+      emailPreview.classList.remove('show');
+    }
+
+    detailBox.classList.add('show');
+  }
+
+  function renderResults(query){
+    var q = query.trim().toLowerCase();
+    if(q === ''){ resultsBox.classList.remove('show'); resultsBox.innerHTML = ''; return; }
+
+    var matches = members.filter(function(m){
+      return m.name.toLowerCase().indexOf(q) !== -1 || String(m.id) === q;
+    }).slice(0, 6);
+
+    resultsBox.innerHTML = '';
+    if(matches.length === 0){
+      var empty = document.createElement('div');
+      empty.className = 'pf-no-results';
+      empty.textContent = 'Sin coincidencias entre los 300 socios simulados.';
+      resultsBox.appendChild(empty);
+    } else {
+      matches.forEach(function(m){
+        var item = document.createElement('div');
+        item.className = 'pf-result-item';
+        item.tabIndex = 0;
+        var dotCls = m.status === 'verde' ? 'g' : (m.status === 'amarillo' ? 'y' : 'r');
+        item.innerHTML =
+          '<span style="display:flex;align-items:center;gap:9px;">' +
+            '<span class="pf-result-dot ' + dotCls + '"></span>' +
+            '<span class="rname">' + m.name + '</span>' +
+          '</span>' +
+          '<span class="rmeta">#' + m.id + '</span>';
+        item.addEventListener('click', function(){
+          showDetail(m);
+          resultsBox.classList.remove('show');
+          searchInput.value = m.name;
+        });
+        resultsBox.appendChild(item);
+      });
+    }
+    resultsBox.classList.add('show');
+  }
+
+  searchInput.addEventListener('input', function(){ renderResults(searchInput.value); });
+  searchInput.addEventListener('focus', function(){ if(searchInput.value.trim() !== ''){ renderResults(searchInput.value); } });
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('.pf-search-wrap')){ resultsBox.classList.remove('show'); }
+  });
+
+  // --- Filtro por estado (tarjetas clickeables) ---
+  var actionList = document.getElementById('pfActionList');
+  var actionRows = document.getElementById('pfActionRows');
+  var actionTitle = document.getElementById('pfActionTitle');
+  var actionClear = document.getElementById('pfActionClear');
+  var statY = document.getElementById('pfStatY');
+  var statR = document.getElementById('pfStatR');
+
+  function showFilter(status){
+    var cls = status === 'amarillo' ? 'y' : 'r';
+    var label = status === 'amarillo' ? 'Socios en zona de alerta' : 'Socios sin cobertura';
+    var cta = status === 'amarillo' ? 'aviso enviado' : 'seguro suspendido';
+
+    statY.classList.toggle('active', status === 'amarillo');
+    statR.classList.toggle('active', status === 'rojo');
+
+    actionTitle.innerHTML = '<span class="adot ' + cls + '"></span>' + label;
+
+    var filtered = members.filter(function(m){ return m.status === status; });
+    actionRows.innerHTML = '';
+    filtered.forEach(function(m){
+      var row = document.createElement('div');
+      row.className = 'pf-action-row';
+      row.innerHTML =
+        '<span class="arow-l">' +
+          '<span class="arow-dot ' + cls + '"></span>' +
+          '<span><span class="arow-name">' + m.name + '</span> ' +
+          '<span class="arow-type">· ' + m.type + ' · #' + m.id + '</span></span>' +
+        '</span>' +
+        '<span class="arow-cta">' + cta + ' →</span>';
+      row.addEventListener('click', function(){ showDetail(m); });
+      actionRows.appendChild(row);
+    });
+
+    actionList.classList.add('show');
+    actionList.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function clearFilter(){
+    statY.classList.remove('active');
+    statR.classList.remove('active');
+    actionList.classList.remove('show');
+  }
+
+  statY.addEventListener('click', function(){
+    if(statY.classList.contains('active')){ clearFilter(); } else { showFilter('amarillo'); }
+  });
+  statR.addEventListener('click', function(){
+    if(statR.classList.contains('active')){ clearFilter(); } else { showFilter('rojo'); }
+  });
+  statY.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); statY.click(); } });
+  statR.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); statR.click(); } });
+  actionClear.addEventListener('click', clearFilter);
+
+  regenBtn.addEventListener('click', function(){ render(); clearFilter(); });
+  render();
+})();
+</script>
+
+</body>
+</html>
