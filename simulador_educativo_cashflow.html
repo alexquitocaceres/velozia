@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cashflow - Juego y Simulador de Educación Financiera</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Chart.js for Financial Visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            gold: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            },
+            cashgreen: {
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #b45309 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .green-gradient-text {
+      background: linear-gradient(135deg, #a7f3d0 0%, #10b981 50%, #047857 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .board-tile {
+      transition: all 0.2s ease-in-out;
+    }
+    .board-tile.active-tile {
+      transform: scale(1.08);
+      box-shadow: 0 0 20px rgba(52, 211, 153, 0.6);
+      z-index: 10;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(0.98); }
+    }
+    .pulse-glow {
+      animation: pulse-subtle 3s infinite ease-in-out;
+    }
+  </style>
+</head>
+
+<body class="h-full bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cashgreen-500 selection:text-slate-950">
+
+  <!-- HEADER & NAVBAR -->
+  <header class="border-b border-slate-800 bg-slate-900/80 sticky top-0 z-40 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="showLandingPage()">
+        <!-- Velozia Logo integration -->
+        <img src="https://res.cloudinary.com/dgdvr53zp/image/upload/v1782710603/Gemini_Generated_Image_dzrmo0dzrmo0dzrm_xl7x5a.png" 
+             alt="Velozia Logo" 
+             class="h-10 w-auto object-contain rounded-xl shadow-md border border-slate-700/50 hover:opacity-90 transition-opacity" 
+             onerror="this.style.display='none'" />
+        <div class="h-7 w-px bg-slate-800 mx-1 hidden sm:block"></div>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-emerald-500 to-green-400 p-0.5 shadow-lg shadow-emerald-950/50">
+          <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+            <i class="fa-solid fa-chart-line text-emerald-400 text-lg"></i>
+          </div>
+        </div>
+        <div>
+          <span class="font-display font-extrabold text-xl tracking-tight gold-gradient-text">CASHFLOW</span>
+          <span class="text-xs text-emerald-400 block -mt-1 font-medium tracking-wider uppercase">Simulador Financiero</span>
+        </div>
+      </div>
+
+      <!-- Center Status (Visible in game) -->
+      <div id="navGameStatus" class="hidden md:flex items-center space-x-6">
+        <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/50">
+          <span class="text-xs text-slate-400">Nivel:</span>
+          <span id="navLevelBadge" class="text-xs font-bold text-amber-400">Básico</span>
+        </div>
+        <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/50">
+          <span class="text-xs text-slate-400">Jugador:</span>
+          <span id="navPlayerProf" class="text-xs font-semibold text-slate-200">Conserje</span>
+        </div>
+        <div class="flex items-center space-x-2 bg-emerald-950/60 border border-emerald-500/30 px-3 py-1.5 rounded-lg">
+          <i class="fa-solid fa-piggy-bank text-emerald-400 text-xs"></i>
+          <span class="text-xs text-slate-300">Libertad Financiera:</span>
+          <span id="navFreedomPct" class="text-xs font-extrabold text-emerald-400">0%</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <button onclick="openModal('glossaryModal')" class="px-3 py-1.5 text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg transition-colors border border-slate-700 flex items-center space-x-2">
+          <i class="fa-solid fa-book-bookmark text-amber-400"></i>
+          <span class="hidden sm:inline">Glosario</span>
+        </button>
+        <button onclick="openModal('helpModal')" class="px-3 py-1.5 text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg transition-colors border border-slate-700 flex items-center space-x-2">
+          <i class="fa-solid fa-graduation-cap text-emerald-400"></i>
+          <span class="hidden sm:inline">Aprender</span>
+        </button>
+        <button id="btnNewGame" onclick="showLandingPage()" class="px-3 py-1.5 text-xs sm:text-sm font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-lg shadow-md transition-all flex items-center space-x-1.5">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span class="hidden sm:inline">Inicio</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 overflow-y-auto relative">
+
+    <!-- SCREEN 1: LANDING & LEVEL SELECTOR -->
+    <section id="landingPage" class="max-w-6xl mx-auto px-4 py-8 sm:py-12 flex flex-col items-center">
+      
+      <!-- Hero Header -->
+      <div class="text-center max-w-3xl mb-10">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <span>Herramienta Interactiva de Educación Financiera</span>
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-display font-black tracking-tight text-white mb-4 leading-tight">
+          Aprende a Escapar de la <br class="hidden sm:inline" />
+          <span class="gold-gradient-text">Carrera de la Rata</span>
+        </h1>
+        <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+          Basado en la filosofía de <strong class="text-slate-200">Robert Kiyosaki</strong>. Transforma tu mentalidad monetaria: comprende Estados de Resultados, Flujo de Caja, Inversiones e Ingresos Pasivos mientras juegas en tres niveles progresivos.
+        </p>
+      </div>
+
+      <!-- Level Selector Cards -->
+      <div class="w-full mb-10">
+        <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-layer-group text-emerald-400"></i>
+          <span>1. Selecciona tu Nivel de Dificultad Educativa</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          
+          <!-- Level 1 Card -->
+          <div id="levelCard1" onclick="selectLevel(1)" class="glass-panel p-6 rounded-2xl cursor-pointer border-2 transition-all hover:border-emerald-500/60 border-emerald-500/80 bg-slate-900/90 relative group">
+            <div class="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500 text-slate-950">
+              Recomendado Inicio
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl mb-4 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-seedling"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Nivel 1: Básico</h3>
+            <p class="text-xs text-amber-400 font-semibold mb-3">Estudiante / Empleado Junior</p>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              Gastos bajos y deudas simples. Enfocado en entender el flujo de caja diario, ahorros, pago de tarjetas y pequeñas oportunidades inmobiliarias.
+            </p>
+            <ul class="text-xs text-slate-300 space-x-0 space-y-1.5 border-t border-slate-800 pt-3">
+              <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emerald-400 text-[10px]"></i><span>Concepto: Salario vs Ingreso Pasivo</span></li>
+              <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-emerald-400 text-[10px]"></i><span>Eliminación de deudas pequeñas</span></li>
+            </ul>
+          </div>
+
+          <!-- Level 2 Card -->
+          <div id="levelCard2" onclick="selectLevel(2)" class="glass-panel p-6 rounded-2xl cursor-pointer border-2 border-slate-800 transition-all hover:border-amber-500/60 bg-slate-900/60 relative group">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl mb-4 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-briefcase"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Nivel 2: Intermedio</h3>
+            <p class="text-xs text-amber-400 font-semibold mb-3">Profesional / Especialista</p>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              Gastos moderados y deudas reales. Introduce el mercado de acciones, apalancamiento mediante crédito bancario y cálculo de ROI de alquileres.
+            </p>
+            <ul class="text-xs text-slate-300 space-x-0 space-y-1.5 border-t border-slate-800 pt-3">
+              <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-amber-400 text-[10px]"></i><span>Mercado Accionario (Comprar barato)</span></li>
+              <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-amber-400 text-[10px]"></i><span>Apalancamiento Bancario (Deuda buena)</span></li>
+            </ul>
+          </div>
+
+          <!-- Level 3 Card -->
+          <div id="levelCard3" onclick="selectLevel(3)" class="glass-panel p-6 rounded-2xl cursor-pointer border-2 border-slate-800 transition-all hover:border-indigo-500/60 bg-slate-900/60 relative group">
+            <div class="w-12 h-12 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xl mb-4 group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-building-columns"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Nivel 3: Avanzado</h3>
+            <p class="text-xs text-indigo-400 font-semibold mb-3">Empresario / Inversionista</p>
+            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+              Altos ingresos y altos gastos personales. Enfrenta volatilidad de mercado, compras de negocios comerciales y complejos multifamiliares.
+            </p>
+            <ul class="text-xs text-slate-300 space-x-0 space-y-1.5 border-t border-slate-800 pt-3">
+              <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-indigo-400 text-[10px]"></i><span>Grandes Oportunidades y Negocios</span></li>
+              <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-indigo-400 text-[10px]"></i><span>Gestión de crisis y quiebras</span></li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Profession Selector -->
+      <div class="w-full mb-10">
+        <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center space-x-2">
+          <i class="fa-solid fa-user-gear text-emerald-400"></i>
+          <span>2. Elige tu Profesión de Partida</span>
+        </h2>
+        <div id="professionGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Dynamic Profession Cards will be injected by JS based on level -->
+        </div>
+      </div>
+
+      <!-- Start Button -->
+      <div class="w-full flex justify-center">
+        <button onclick="startGame()" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold text-lg shadow-xl shadow-emerald-950/80 transition-all hover:scale-105 flex items-center space-x-3">
+          <i class="fa-solid fa-play text-slate-950"></i>
+          <span>Comenzar Simulación Financiera</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- SCREEN 2: GAME BOARD & FINANCIAL DASHBOARD -->
+    <section id="gamePage" class="hidden max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6">
+      
+      <!-- Top Educational Banner Alert -->
+      <div id="mentorBanner" class="mb-4 bg-gradient-to-r from-amber-950/40 via-slate-900 to-emerald-950/40 border border-amber-500/30 rounded-xl p-3.5 flex items-start sm:items-center space-x-3 text-xs sm:text-sm">
+        <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-lightbulb text-base"></i>
+        </div>
+        <div class="flex-1">
+          <span class="font-bold text-amber-400 mr-1">Consejero Financiero:</span>
+          <span id="mentorMessage" class="text-slate-300">
+            Tu meta actual es acumular suficientes <strong class="text-emerald-400">Ingresos Pasivos</strong> para cubrir tus <strong class="text-red-400">Gastos Totales</strong>. Cada decisión cuenta.
+          </span>
+        </div>
+        <button onclick="dismissMentorBanner()" class="text-slate-500 hover:text-slate-300"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- LEFT COLUMN: GAME BOARD & CONTROLS (5 cols on lg) -->
+        <div class="lg:col-span-5 flex flex-col space-y-5">
+          
+          <!-- Board Container -->
+          <div class="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col items-center">
+            
+            <div class="w-full flex items-center justify-between mb-3 px-1">
+              <div class="flex items-center space-x-2">
+                <span id="trackTypeBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-red-500/20 text-red-400 border border-red-500/30">
+                  <i class="fa-solid fa-arrow-rotate-right mr-1"></i>Carrera de la Rata
+                </span>
+              </div>
+              <span class="text-xs text-slate-400">Casilla <span id="currentTileNum" class="font-bold text-white">0</span> / 12</span>
+            </div>
+
+            <!-- Visual Track Wheel / Grid -->
+            <div class="w-full aspect-square max-w-[340px] relative bg-slate-900/90 rounded-2xl border border-slate-800 p-2 grid grid-cols-4 grid-rows-4 gap-1.5">
+              
+              <!-- Center Status Box -->
+              <div class="col-span-2 row-span-2 col-start-2 row-start-2 bg-slate-950/80 rounded-xl border border-slate-800 p-3 flex flex-col items-center justify-center text-center">
+                <div class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">Meta Financiera</div>
+                <div class="text-xs font-semibold text-slate-300 mb-1">Ingresos Pasivos vs Gastos</div>
+                <div class="text-sm font-extrabold text-emerald-400" id="centerRatioText">$0 / $0</div>
+                <div class="w-full bg-slate-800 h-2 rounded-full mt-2 overflow-hidden border border-slate-700">
+                  <div id="centerProgressBar" class="bg-gradient-to-r from-amber-500 to-emerald-500 h-full w-0 transition-all duration-500"></div>
+                </div>
+              </div>
+
+              <!-- 12 Tiles in a loop around the 4x4 grid -->
+              <!-- Tile 0: Payday -->
+              <div id="tile-0" class="board-tile bg-emerald-950/60 border border-emerald-500/40 rounded-lg p-1.5 flex flex-col items-center justify-center text-center">
+                <i class="fa-solid fa-money-bill-wave text-emerald-400 text-xs"></i>
+                <span class="text-[9px] font-bold text-emerald-300 mt-0.5">Día de Pago</span>
+              </div>
+              <!-- Tile 1: Small Deal -->
+              <div id="tile-1" class="board-tile bg-amber-950/40 border border-amber-500/30 rounded-lg p-1.5 flex flex-col items-center justify-center text-center">
+                <i class="fa-solid fa-house text-amber-400 text-xs"></i>
+                <span class="text-[9px] font-semibold text-amber-300 mt-0.5">Oportunidad</span>
+              </div>
+              <!-- Tile 2: Doodad -->
+              <div id="tile-2" class="board-tile bg-red-950/40 border border-red-500/30 rounded-lg p-1.5 flex flex-col items-center justify-center text-center">
+                <i class="fa-solid fa-cart-shopping text-red-400 text-xs"></i>
+                <span class="text-[9px] font-semibold text-red-300 mt-0.5">Capricho</span>
+              </div>
+              <!-- Tile 3: Small Deal -->
+              <div id="tile-3" class="board-tile bg-amber-950/40 border border-amber-500/30 rounded-lg p-1.5 flex flex-col items-center justify-center text-center">
+                <i class="fa-solid fa-chart-line text-amber-400 text-xs"></i>
+                <span class="text-[9px] font-semibold text-amber-300 mt-0.5">Oportunidad</span>
+              </div>
+              <!-- Tile 4: Market -->
+              <div id="tile-4" class="board-tile bg-blue-950/40 border border-blue-500/30 rounded-lg p-1.5 flex flex-col items-center justify-center text-center">
+                <i class="fa-solid fa-store text-blue-400 text-xs"></i>
+                <span class="text-[9px] font-semibold text-blue-300 mt-0.5">Mercado</span>
+              </div>
+              <!-- Tile 5: Payday -->
+              <div id="tile-5" class="board-tile bg-emerald-950/60 border border-emerald-500/40 rounded-lg p-1.5 flex flex-col items-center justify-center text-center">
+                <i class="fa-solid fa-money-bill-wave text-emerald-400 text-xs"></i>
+                <span class="text-[9px] font-bold text-emerald-300 mt-0.5">Día de Pago</span>
+              </div>
+              <!-- Tile 6: Doodad -->
+              <div id="tile-6" class="board-tile bg-red-950/40 border border-red-500/30 rounded-lg p-1.5 flex flex-col items-center justify-center text-center">
+                <i class="fa-solid fa-credit-card text-red-400 text-xs"></i>
+                <span class="text-[9px] font-semibold text-red-300 mt-0.5">Capricho</span>
+              </div>
+              <!-- Tile 7: Big Deal -->
+              <div id="tile-7" class="board-tile bg-purple-950/40 border border-purple-500/30 rounded-lg p-1.5 flex flex-col items-center justify-center text-center">
+                <i class="fa-solid fa-building text-purple-400 text-xs"></i>
+                <span class="text-[9px] font-semibold text-purple-300 mt-0.5">Gran Negocio</span>
+              </div>
+              <!-- Tile 8: Market -->
+              <div id="tile-8" class="board-tile bg-blue-950/40 border border-blue-500/30 rounded-lg p-1.5 flex flex-col items-center justify-center text-center">
+                <i class="fa-solid fa-bullhorn text-blue-400 text-xs"></i>
+                <span class="text-[9px] font-semibold text-blue-300 mt-0.5">Mercado</span>
+              </div>
+              <!-- Tile 9: Payday -->
+              <div id="tile-9" class="board-tile bg-emerald-950/60 border border-emerald-500/40 rounded-lg p-1.5 flex flex-col items-center justify-center text-center">
+                <i class="fa-solid fa-money-bill-wave text-emerald-400 text-xs"></i>
+                <span class="text-[9px] font-bold text-emerald-300 mt-0.5">Día de Pago</span>
+              </div>
+              <!-- Tile 10: Baby / Expense -->
+              <div id="tile-10" class="board-tile bg-pink-950/40 border border-pink-500/30 rounded-lg p-1.5 flex flex-col items-center justify-center text-center">
+                <i class="fa-solid fa-baby text-pink-400 text-xs"></i>
+                <span class="text-[9px] font-semibold text-pink-300 mt-0.5">Hijo / Gasto</span>
+              </div>
+              <!-- Tile 11: Downsized / Loss -->
+              <div id="tile-11" class="board-tile bg-slate-800 border border-slate-600 rounded-lg p-1.5 flex flex-col items-center justify-center text-center">
+                <i class="fa-solid fa-user-slash text-slate-400 text-xs"></i>
+                <span class="text-[9px] font-semibold text-slate-300 mt-0.5">Imprevisto</span>
+              </div>
+
+            </div>
+
+            <!-- Controls & Dice Roller -->
+            <div class="w-full mt-4 flex items-center justify-between bg-slate-900 p-3 rounded-xl border border-slate-800">
+              <div class="flex items-center space-x-3">
+                <div id="diceVisual" class="w-12 h-12 bg-slate-800 border-2 border-amber-500/80 rounded-xl flex items-center justify-center text-2xl font-black text-amber-400 shadow-inner">
+                  🎲
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-400 uppercase font-bold">Turno Actual</div>
+                  <div id="turnCounter" class="text-sm font-bold text-white">Mes 1</div>
+                </div>
+              </div>
+
+              <button id="btnRollDice" onclick="rollDice()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-950/50 transition-all hover:scale-105 flex items-center space-x-2">
+                <i class="fa-solid fa-dice"></i>
+                <span>Tirar Dado</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Quick Banking Actions (Take Loan / Pay Debt) -->
+          <div class="glass-panel p-4 rounded-2xl border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3 flex items-center justify-between">
+              <span><i class="fa-solid fa-building-columns text-amber-400 mr-2"></i>Gestión Bancaria</span>
+              <span class="text-[10px] text-slate-400 font-normal">Interés bancario: 10%/mes</span>
+            </h3>
+
+            <div class="grid grid-cols-2 gap-3">
+              <button onclick="openModal('loanModal')" class="p-2.5 bg-slate-800/80 hover:bg-slate-700/80 rounded-xl border border-slate-700/60 text-left transition-colors">
+                <div class="text-[10px] text-slate-400">Solicitar Préstamo</div>
+                <div class="text-xs font-bold text-emerald-400 flex items-center justify-between mt-0.5">
+                  <span>+ $1,000</span>
+                  <i class="fa-solid fa-plus-circle"></i>
+                </div>
+              </button>
+
+              <button onclick="openModal('payDebtModal')" class="p-2.5 bg-slate-800/80 hover:bg-slate-700/80 rounded-xl border border-slate-700/60 text-left transition-colors">
+                <div class="text-[10px] text-slate-400">Amortizar Deudas</div>
+                <div class="text-xs font-bold text-amber-400 flex items-center justify-between mt-0.5">
+                  <span>Pagar Deuda</span>
+                  <i class="fa-solid fa-hand-holding-dollar"></i>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Financial Health Chart -->
+          <div class="glass-panel p-4 rounded-2xl border border-slate-800 hidden sm:block">
+            <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center justify-between">
+              <span><i class="fa-solid fa-chart-pie text-emerald-400 mr-2"></i>Estructura de Ingresos</span>
+            </div>
+            <div class="h-40 relative flex items-center justify-center">
+              <canvas id="financialPieChart"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: FINANCIAL STATEMENT (7 cols on lg) -->
+        <div class="lg:col-span-7 flex flex-col space-y-5">
+          
+          <!-- FINANCIAL STATEMENT CONTAINER -->
+          <div class="glass-panel p-5 rounded-2xl border border-slate-800 relative">
+            
+            <!-- Header of Financial Statement -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-800 gap-2">
+              <div>
+                <h2 class="text-lg font-display font-bold text-white flex items-center space-x-2">
+                  <i class="fa-solid fa-file-invoice-dollar text-emerald-400"></i>
+                  <span>Estado Financiero (Hoja de Balance)</span>
+                </h2>
+                <p class="text-xs text-slate-400">Actualizado dinámicamente con cada transacción</p>
+              </div>
+
+              <!-- Net Cashflow (Payday) Highlight Box -->
+              <div class="bg-emerald-950/80 border border-emerald-500/40 px-4 py-2 rounded-xl flex items-center justify-between sm:justify-start space-x-3">
+                <div>
+                  <div class="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Flujo de Caja Neto (Payday)</div>
+                  <div id="statNetCashflow" class="text-lg font-black text-emerald-300">$1,100</div>
+                </div>
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <i class="fa-solid fa-arrow-trend-up text-sm"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cash On Hand Header Widget -->
+            <div class="mb-5 bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                  <i class="fa-solid fa-wallet"></i>
+                </div>
+                <div>
+                  <div class="text-xs text-slate-400">Efectivo Disponible (Ahorros):</div>
+                  <div id="statCashOnHand" class="text-xl font-extrabold gold-gradient-text">$1,500</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-[10px] text-slate-400">Ratio Libertad Financiera</div>
+                <div id="statFreedomPctText" class="text-sm font-bold text-emerald-400">0.0%</div>
+              </div>
+            </div>
+
+            <!-- 2x2 QUADRANTS: INCOME & EXPENSES / ASSETS & LIABILITIES -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
+              <!-- QUADRANT 1: INGRESOS (INCOME) -->
+              <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+                  <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center">
+                    <i class="fa-solid fa-circle-plus mr-1.5 text-[10px]"></i>1. Ingresos
+                  </h3>
+                  <span id="statTotalIncome" class="text-xs font-bold text-emerald-300">$2,000</span>
+                </div>
+
+                <div class="space-y-2 text-xs">
+                  <div class="flex justify-between text-slate-300">
+                    <span>Salario:</span>
+                    <span id="statSalary" class="font-semibold text-slate-200">$2,000</span>
+                  </div>
+
+                  <div class="border-t border-slate-800/60 pt-2">
+                    <div class="flex justify-between text-slate-400 text-[11px] font-bold uppercase mb-1">
+                      <span>Ingresos Pasivos:</span>
+                      <span id="statPassiveIncome" class="text-emerald-400">$0</span>
+                    </div>
+                    
+                    <div id="passiveIncomeList" class="space-y-1 pl-2 text-[11px] text-slate-300 max-h-24 overflow-y-auto">
+                      <div class="text-slate-500 italic">Sin activos generando pasivos aún</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- QUADRANT 2: GASTOS (EXPENSES) -->
+              <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+                  <h3 class="text-xs font-bold text-red-400 uppercase tracking-wider flex items-center">
+                    <i class="fa-solid fa-circle-minus mr-1.5 text-[10px]"></i>2. Gastos
+                  </h3>
+                  <span id="statTotalExpenses" class="text-xs font-bold text-red-300">$900</span>
+                </div>
+
+                <div id="expensesList" class="space-y-1.5 text-xs text-slate-300 max-h-36 overflow-y-auto pr-1">
+                  <!-- Dynamic expenses list -->
+                </div>
+              </div>
+
+              <!-- QUADRANT 3: ACTIVOS (ASSETS) -->
+              <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+                  <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center">
+                    <i class="fa-solid fa-gem mr-1.5 text-[10px]"></i>3. Activos
+                  </h3>
+                  <span id="statAssetCount" class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">0 ítems</span>
+                </div>
+
+                <div id="assetsList" class="space-y-2 text-xs text-slate-300 max-h-44 overflow-y-auto pr-1">
+                  <div class="text-slate-500 italic text-[11px]">No posees activos. ¡Compra en casillas de Oportunidad!</div>
+                </div>
+              </div>
+
+              <!-- QUADRANT 4: PASIVOS (LIABILITIES) -->
+              <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+                  <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center">
+                    <i class="fa-solid fa-handshake-slash mr-1.5 text-[10px]"></i>4. Pasivos (Deudas)
+                  </h3>
+                  <span id="statTotalLiabilities" class="text-xs font-bold text-purple-300">$37,000</span>
+                </div>
+
+                <div id="liabilitiesList" class="space-y-1.5 text-xs text-slate-300 max-h-44 overflow-y-auto pr-1">
+                  <!-- Dynamic liabilities list -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Educational Footer Info Box -->
+            <div class="mt-4 p-3 bg-slate-950/80 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+              <div class="flex items-center space-x-2 text-slate-400">
+                <i class="fa-solid fa-circle-info text-amber-400"></i>
+                <span>Fórmula de Victoria: <strong>Ingreso Pasivo ≥ Gastos Totales</strong></span>
+              </div>
+              <button onclick="openModal('glossaryModal')" class="text-emerald-400 hover:underline font-semibold text-[11px]">
+                Ver Conceptos
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODALS SECTION -->
+  
+  <!-- 1. EVENT CARD MODAL (Small/Big Deal, Doodad, Market, Payday, etc.) -->
+  <div id="eventModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-panel max-w-lg w-full rounded-2xl border border-slate-700 p-6 shadow-2xl relative animate-fade-in">
+      
+      <!-- Card Header Badge -->
+      <div class="flex items-center justify-between mb-4">
+        <span id="eventCardCategory" class="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30">
+          Oportunidad Pequeña
+        </span>
+        <span class="text-xs text-slate-400"><i class="fa-solid fa-graduation-cap text-amber-400 mr-1"></i>Tarjeta de Evento</span>
+      </div>
+
+      <h3 id="eventCardTitle" class="text-xl font-display font-bold text-white mb-2">
+        Casa en Remate 2H/1B
+      </h3>
+
+      <div id="eventCardDescription" class="text-xs sm:text-sm text-slate-300 mb-4 leading-relaxed">
+        Un propietario motivado vende una casa por debajo del valor de mercado. Requiere un pago inicial.
+      </div>
+
+      <!-- Financial Metrics Grid -->
+      <div id="eventMetricsGrid" class="grid grid-cols-2 gap-3 mb-5 p-3.5 bg-slate-900/90 rounded-xl border border-slate-800">
+        <!-- Injected dynamically -->
+      </div>
+
+      <!-- Educational Callout Inside Card -->
+      <div class="mb-6 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-xs text-slate-300 flex items-start space-x-2.5">
+        <i class="fa-solid fa-lightbulb text-emerald-400 text-sm shrink-0 mt-0.5"></i>
+        <div>
+          <span class="font-bold text-emerald-400">Lección Financiera:</span>
+          <span id="eventEducationalTip" class="text-slate-300">Evalúa el ROI (Retorno de Inversión) sobre el pago inicial entregado.</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div id="eventActions" class="flex items-center justify-end space-x-3">
+        <!-- Injected dynamically -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2. LOAN MODAL -->
+  <div id="loanModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-panel max-w-md w-full rounded-2xl border border-slate-700 p-6 shadow-2xl">
+      <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+          <i class="fa-solid fa-building-columns text-emerald-400"></i>
+          <span>Solicitar Préstamo Bancario</span>
+        </h3>
+        <button onclick="closeModal('loanModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <p class="text-xs text-slate-300 mb-4">
+        El banco presta dinero en incrementos de <strong>$1,000</strong>. Cada $1,000 solicitados incrementará tus gastos mensuales en <strong>$100 (10% de interés mensual)</strong>.
+      </p>
+
+      <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 mb-4 space-y-3">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-400">Monto del Préstamo:</span>
+          <span id="loanAmountText" class="font-extrabold text-emerald-400 text-base">$1,000</span>
+        </div>
+        <input type="range" id="loanRange" min="1000" max="20000" step="1000" value="1000" oninput="updateLoanCalc()" class="w-full accent-emerald-500 cursor-pointer">
+        <div class="flex justify-between items-center text-[11px] text-slate-400 pt-2 border-t border-slate-800">
+          <span>Nuevo gasto mensual adicional:</span>
+          <span id="loanExpenseText" class="font-bold text-red-400">+$100/mes</span>
+        </div>
+      </div>
+
+      <div class="p-3 bg-amber-950/30 border border-amber-500/20 rounded-xl text-xs text-amber-300 mb-5">
+        <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+        <strong>Usa la deuda como apalancamiento:</strong> Pide un préstamo únicamente si el activo que vas a comprar genera un flujo mensual superior al costo de interés ($100 por cada $1,000).
+      </div>
+
+      <div class="flex justify-end space-x-3">
+        <button onclick="closeModal('loanModal')" class="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl">Cancelar</button>
+        <button onclick="confirmTakeLoan()" class="px-5 py-2 text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl shadow-lg">Confirmar Préstamo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. PAY DEBT MODAL -->
+  <div id="payDebtModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-panel max-w-md w-full rounded-2xl border border-slate-700 p-6 shadow-2xl">
+      <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+          <i class="fa-solid fa-hand-holding-dollar text-amber-400"></i>
+          <span>Pagar / Amortizar Pasivos</span>
+        </h3>
+        <button onclick="closeModal('payDebtModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <p class="text-xs text-slate-300 mb-4">
+        Eliminar pasivos cancela inmediatamente sus gastos mensuales asociados, aumentando tu Flujo de Caja.
+      </p>
+
+      <div id="debtsPayList" class="space-y-2 mb-5 max-h-60 overflow-y-auto pr-1">
+        <!-- Dynamic list of debts to pay -->
+      </div>
+
+      <div class="flex justify-end">
+        <button onclick="closeModal('payDebtModal')" class="px-4 py-2 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. FINANCIAL GLOSSARY MODAL -->
+  <div id="glossaryModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-panel max-w-2xl w-full rounded-2xl border border-slate-700 p-6 shadow-2xl max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3 shrink-0">
+        <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+          <i class="fa-solid fa-book-open-reader text-amber-400"></i>
+          <span>Glosario de Educación Financiera</span>
+        </h3>
+        <button onclick="closeModal('glossaryModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-4 overflow-y-auto pr-2 text-xs text-slate-300 flex-1">
+        
+        <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+          <div class="font-bold text-emerald-400 text-sm mb-1">Activo vs. Pasivo</div>
+          <p class="leading-relaxed">
+            Un <strong>Activo</strong> introduce dinero en tu bolsillo de forma recurrente (alquileres, dividendos, negocios). Un <strong>Pasivo</strong> extrae dinero de tu bolsillo (hipotecas personales, tarjetas de crédito, préstamos de autos).
+          </p>
+        </div>
+
+        <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+          <div class="font-bold text-amber-400 text-sm mb-1">Flujo de Caja (Cashflow)</div>
+          <p class="leading-relaxed">
+            Es la diferencia constante entre tus Ingresos Totales y tus Gastos Totales ($Ingresos - Gastos$). Es el capital libre que recibes en cada Día de Pago.
+          </p>
+        </div>
+
+        <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+          <div class="font-bold text-indigo-400 text-sm mb-1">Apalancamiento (Deuda Buena)</div>
+          <p class="leading-relaxed">
+            Utilizar el dinero del banco para adquirir activos. Si el rendimiento generado por la propiedad o negocio supera la tasa de interés del crédito bancario, estás multiplicando tu patrimonio con capital ajeno.
+          </p>
+        </div>
+
+        <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+          <div class="font-bold text-teal-400 text-sm mb-1">ROI (Retorno de Inversión)</div>
+          <p class="leading-relaxed">
+            Porcentaje de rentabilidad anual sobre el dinero propio efectivamente desembolsado ($ROI = (Flujo Anual / Pago Inicial) \times 100$). A mayor ROI, más rápido recuperas el capital.
+          </p>
+        </div>
+
+        <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+          <div class="font-bold text-purple-400 text-sm mb-1">Carrera de la Rata (Rat Race)</div>
+          <p class="leading-relaxed">
+            El ciclo financiero atrapante en el que se trabaja por dinero para pagar gastos acumulados, obligando a trabajar más para cubrir mayores pasivos sin acumular libertad.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-slate-800 flex justify-end shrink-0">
+        <button onclick="closeModal('glossaryModal')" class="px-5 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. HELP & INSTRUCTIONS MODAL -->
+  <div id="helpModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-panel max-w-xl w-full rounded-2xl border border-slate-700 p-6 shadow-2xl max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3 shrink-0">
+        <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+          <i class="fa-solid fa-graduation-cap text-emerald-400"></i>
+          <span>¿Cómo Jugar y Aprender?</span>
+        </h3>
+        <button onclick="closeModal('helpModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-3 overflow-y-auto pr-2 text-xs text-slate-300 flex-1 leading-relaxed">
+        <div class="flex items-start space-x-3">
+          <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shrink-0">1</div>
+          <p><strong>Tira los dados:</strong> Avanza por el tablero circular. Cada casilla desencadena una situación económica real.</p>
+        </div>
+        <div class="flex items-start space-x-3">
+          <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shrink-0">2</div>
+          <p><strong>Día de Pago (Payday):</strong> Cobras tu Flujo de Caja Neto ($Ingresos - Gastos$). ¡Aumenta este número comprando activos!</p>
+        </div>
+        <div class="flex items-start space-x-3">
+          <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shrink-0">3</div>
+          <p><strong>Oportunidades y Mercado:</strong> Compra acciones baratas o inmuebles con flujo de caja positivo. Véndelos cuando el Mercado pague precios altos.</p>
+        </div>
+        <div class="flex items-start space-x-3">
+          <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shrink-0">4</div>
+          <p><strong>Gana el Juego:</strong> Logra que tus <strong>Ingresos Pasivos</strong> igualen o superen tus <strong>Gastos Totales</strong> para escapar a la Pista Rápida.</p>
+        </div>
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-slate-800 flex justify-end shrink-0">
+        <button onclick="closeModal('helpModal')" class="px-5 py-2 text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. VICTORY / FAST TRACK MODAL -->
+  <div id="victoryModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-panel max-w-lg w-full rounded-3xl border-2 border-emerald-500/60 p-8 shadow-2xl text-center relative overflow-hidden">
+      
+      <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-amber-500 to-emerald-400 p-1 mb-4 shadow-xl shadow-emerald-950">
+        <div class="w-full h-full bg-slate-950 rounded-[22px] flex items-center justify-center text-4xl text-amber-400">
+          🏆
+        </div>
+      </div>
+
+      <h2 class="text-2xl sm:text-3xl font-display font-extrabold text-white mb-2">
+        ¡Haz Escapado de la <br /><span class="gold-gradient-text">Carrera de la Rata!</span>
+      </h2>
+
+      <p class="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
+        ¡Felicidades! Tus <strong>Ingresos Pasivos</strong> son superiores a tus <strong>Gastos Totales</strong>. Has alcanzado la verdadera <strong class="text-emerald-400">Independencia Financiera</strong>.
+      </p>
+
+      <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 text-xs space-y-2 mb-6 text-left">
+        <div class="flex justify-between">
+          <span class="text-slate-400">Ingresos Pasivos Totales:</span>
+          <span id="victoryPassive" class="font-extrabold text-emerald-400">$0</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Gastos Totales:</span>
+          <span id="victoryExpenses" class="font-bold text-red-400">$0</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Turnos empleadores:</span>
+          <span id="victoryTurns" class="font-bold text-amber-400">0 meses</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <button onclick="closeModal('victoryModal'); showLandingPage();" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 font-extrabold text-slate-950 text-sm shadow-lg">
+          Jugar Otro Nivel
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT GAME ENGINE -->
+  <script>
+    /* ==========================================================================
+       1. GAME DATA & PRESETS (LEVELS & PROFESSIONS)
+       ========================================================================== */
+    
+    // Level & Profession Definitions
+    const LEVEL_DATA = {
+      1: {
+        name: "Básico",
+        professions: [
+          { id: 'conserje', title: 'Conserje / Limpiador', salary: 1400, savings: 400, mortgage: 200, carLoan: 40, creditCard: 30, eduLoan: 0, otherExp: 330, childCost: 70 },
+          { id: 'maestro', title: 'Maestro de Escuela', salary: 1800, savings: 600, mortgage: 300, carLoan: 60, creditCard: 40, eduLoan: 40, otherExp: 460, childCost: 100 }
+        ]
+      },
+      2: {
+        name: "Intermedio",
+        professions: [
+          { id: 'enfermero', title: 'Enfermero Especialista', salary: 3100, savings: 1000, mortgage: 600, carLoan: 120, creditCard: 90, eduLoan: 90, otherExp: 800, childCost: 160 },
+          { id: 'ingeniero', title: 'Ingeniero de Software', salary: 4900, savings: 1600, mortgage: 1000, carLoan: 200, creditCard: 180, eduLoan: 120, otherExp: 1300, childCost: 240 }
+        ]
+      },
+      3: {
+        name: "Avanzado",
+        professions: [
+          { id: 'abogado', title: 'Abogado Corporativo', salary: 7500, savings: 2500, mortgage: 1600, carLoan: 350, creditCard: 300, eduLoan: 250, otherExp: 2100, childCost: 400 },
+          { id: 'medico', title: 'Médico Cirujano', salary: 11000, savings: 3500, mortgage: 2400, carLoan: 500, creditCard: 450, eduLoan: 400, otherExp: 3100, childCost: 650 }
+        ]
+      }
+    };
+
+    // Card Deck Data Generators
+    const DECK_SMALL_DEALS = [
+      {
+        title: "Casa Remate 2H/1B",
+        category: "Bienes Raíces",
+        cost: 35000,
+        downPayment: 3000,
+        cashFlow: 220,
+        mortgage: 32000,
+        description: "Casa pequeña embargada por el banco. Requiere pago inicial ajustado y genera rentas constantes.",
+        tip: "ROI del enganche = (220 * 12 / 3000) = 88% anual. Excelente oportunidad de flujo pasivo."
+      },
+      {
+        title: "Terreno Urbano Pequeño",
+        category: "Bienes Raíces",
+        cost: 15000,
+        downPayment: 2000,
+        cashFlow: 100,
+        mortgage: 13000,
+        description: "Lote pequeño en zona residencial de expansión. Se alquila como estacionamiento temporal.",
+        tip: "Las propiedades con bajo enganche aumentan tu patrimonio neto rápido."
+      },
+      {
+        title: "Acciones Certificado 'OK4U'",
+        category: "Acciones",
+        costPerShare: 10,
+        type: 'stock',
+        description: "Compañía farmacéutica emergente cotiza a $10 por acción (Rango histórico: $5 a $40).",
+        tip: "Comprar acciones a precios bajos te da la liquidez necesaria para luego comprar bienes raíces."
+      },
+      {
+        title: "Monedas de Plata Antiguas",
+        category: "Commodity",
+        cost: 1000,
+        downPayment: 1000,
+        cashFlow: 0,
+        mortgage: 0,
+        description: "Lote de 20 monedas coleccionables compradas a coleccionista privado.",
+        tip: "No genera flujo mensual, pero puede venderse más caro en eventos de Mercado."
+      },
+      {
+        title: "Condominio 1H/1B",
+        category: "Bienes Raíces",
+        cost: 50000,
+        downPayment: 5000,
+        cashFlow: 350,
+        mortgage: 45000,
+        description: "Departamento monoambiente cerca de zona universitaria. Alta demanda de alquiler.",
+        tip: "Un flujo pasivo constante de $350 acerca a cubrir tus gastos mensuales."
+      }
+    ];
+
+    const DECK_BIG_DEALS = [
+      {
+        title: "Edificio 8 Apartamentos",
+        category: "Bienes Raíces Comercial",
+        cost: 240000,
+        downPayment: 25000,
+        cashFlow: 1800,
+        mortgage: 215000,
+        description: "Complejo residencial multifamiliar totalmente ocupado con contrato a largo plazo.",
+        tip: "Los Big Deals entregan incrementos masivos de Ingresos Pasivos para ganar la partida."
+      },
+      {
+        title: "Franquicia Car Wash Automático",
+        category: "Negocio Automatizado",
+        cost: 120000,
+        downPayment: 15000,
+        cashFlow: 1200,
+        mortgage: 105000,
+        description: "Lavado de autos totalmente automatizado con gerencia contratada.",
+        tip: "Un negocio automatizado no requiere de tu tiempo de trabajo y aporta ingreso pasivo puro."
+      },
+      {
+        title: "Lavandería Automática 24h",
+        category: "Negocio Comercial",
+        cost: 80000,
+        downPayment: 10000,
+        cashFlow: 850,
+        mortgage: 70000,
+        description: "Negocio establecido con máquinas de monedas de alto flujo diario.",
+        tip: "Suma activos diversificados para protegerte de fluctuaciones económicas."
+      }
+    ];
+
+    const DECK_DOODADS = [
+      { title: "Televisor OLED 4K Ultrawide", cost: 1200, description: "Compras una pantalla gigante a crédito para ver deportes." },
+      { title: "Vacaciones de Lujo en Cancún", cost: 2500, description: "Viaje imprevisto pagado en efectivo o tarjeta." },
+      { title: "Reloj de Alta Gama", cost: 800, description: "Un capricho personal sin retorno financiero." },
+      { title: "Reparación Mecánica de Emergencia", cost: 600, description: "Fallo en la transmisión del auto familiar." }
+    ];
+
+    const DECK_MARKET = [
+      {
+        title: "Comprador de Bienes Raíces Busca Casas 2H/1B",
+        type: 'buy_house',
+        offerPrice: 65000,
+        description: "Un inversionista extranjero ofrece comprar casas de 2H/1B por $65,000. Si tienes una, ¡puedes venderla!",
+        tip: "Vender activos con alta ganancia te da liquidez masiva para saltar a Grandes Negocios."
+      },
+      {
+        title: "Auge en la Bolsa de Valores",
+        type: 'stock_surge',
+        stockName: 'OK4U',
+        price: 35,
+        description: "Las acciones de OK4U suben a $35 por acción. ¡Hora de cobrar tus ganancias de capital!",
+        tip: "Las ganancias de capital se realizan al vender los títulos en el pico del mercado."
+      }
+    ];
+
+    /* ==========================================================================
+       2. APPLICATION & GAME STATE
+       ========================================================================== */
+    
+    let gameState = {
+      selectedLevel: 1,
+      selectedProf: null,
+      turnMonth: 1,
+      currentTile: 0,
+      cash: 0,
+      salary: 0,
+      
+      // Expenses
+      expenses: {
+        mortgage: 0,
+        carLoan: 0,
+        creditCard: 0,
+        eduLoan: 0,
+        otherExp: 0,
+        bankInterest: 0,
+        childrenCount: 0,
+        childCostPer: 0
+      },
+
+      // Assets Array: { id, title, type, cost, downPayment, cashFlow, mortgage, qty, costPerShare }
+      assets: [],
+
+      // Liabilities Base Amounts
+      liabilities: {
+        mortgage: 0,
+        carLoan: 0,
+        creditCard: 0,
+        eduLoan: 0,
+        bankLoan: 0
+      },
+
+      // Chart
+      chartInstance: null
+    };
+
+    /* ==========================================================================
+       3. INITIALIZATION & NAVIGATION
+       ========================================================================== */
+    
+    window.onload = function() {
+      selectLevel(1);
+    };
+
+    function selectLevel(levelNum) {
+      gameState.selectedLevel = levelNum;
+
+      // Update Card Visuals
+      [1, 2, 3].forEach(l => {
+        const card = document.getElementById(`levelCard${l}`);
+        if (l === levelNum) {
+          card.classList.add('border-emerald-500', 'bg-slate-900/90');
+          card.classList.remove('border-slate-800', 'bg-slate-900/60');
+        } else {
+          card.classList.remove('border-emerald-500', 'bg-slate-900/90');
+          card.classList.add('border-slate-800', 'bg-slate-900/60');
+        }
+      });
+
+      renderProfessionCards(levelNum);
+    }
+
+    function renderProfessionCards(levelNum) {
+      const container = document.getElementById('professionGrid');
+      container.innerHTML = '';
+
+      const levelObj = LEVEL_DATA[levelNum];
+      levelObj.professions.forEach((prof, idx) => {
+        const isSelected = idx === 0;
+        if (isSelected) gameState.selectedProf = prof;
+
+        const card = document.createElement('div');
+        card.className = `prof-card glass-panel p-4 rounded-xl cursor-pointer border ${isSelected ? 'border-amber-400 bg-slate-900/90' : 'border-slate-800 hover:border-slate-700 bg-slate-900/50'} transition-all`;
+        card.onclick = () => {
+          document.querySelectorAll('.prof-card').forEach(c => c.classList.remove('border-amber-400', 'bg-slate-900/90'));
+          card.classList.add('border-amber-400', 'bg-slate-900/90');
+          gameState.selectedProf = prof;
+        };
+
+        const totalStartExpenses = prof.mortgage + prof.carLoan + prof.creditCard + prof.eduLoan + prof.otherExp;
+        const startNetCashflow = prof.salary - totalStartExpenses;
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-white text-sm">${prof.title}</span>
+            <i class="fa-solid fa-user text-amber-400 text-xs"></i>
+          </div>
+          <div class="space-y-1 text-xs mb-3 text-slate-300">
+            <div class="flex justify-between"><span>Salario:</span><span class="text-emerald-400 font-bold">$${prof.salary.toLocaleString()}</span></div>
+            <div class="flex justify-between"><span>Gastos Iniciales:</span><span class="text-red-400 font-bold">$${totalStartExpenses.toLocaleString()}</span></div>
+            <div class="flex justify-between border-t border-slate-800 pt-1 font-semibold">
+              <span>Flujo Inicial:</span><span class="text-emerald-300">$${startNetCashflow.toLocaleString()}</span>
+            </div>
+          </div>
+          <div class="text-[10px] text-slate-400 bg-slate-950/60 p-2 rounded-lg">
+            Ahorros de partida: <strong class="text-amber-300">$${(prof.savings + prof.salary).toLocaleString()}</strong>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function showLandingPage() {
+      document.getElementById('landingPage').classList.remove('hidden');
+      document.getElementById('gamePage').classList.add('hidden');
+      document.getElementById('navGameStatus').classList.add('hidden');
+    }
+
+    function startGame() {
+      if (!gameState.selectedProf) return;
+
+      const prof = gameState.selectedProf;
+      gameState.turnMonth = 1;
+      gameState.currentTile = 0;
+      gameState.salary = prof.salary;
+      gameState.cash = prof.savings + prof.salary; // Savings + First payday
+
+      gameState.expenses = {
+        mortgage: prof.mortgage,
+        carLoan: prof.carLoan,
+        creditCard: prof.creditCard,
+        eduLoan: prof.eduLoan,
+        otherExp: prof.otherExp,
+        bankInterest: 0,
+        childrenCount: 0,
+        childCostPer: prof.childCostCost || prof.childCost
+      };
+
+      gameState.liabilities = {
+        mortgage: prof.mortgage > 0 ? prof.mortgage * 100 : 0, // Approx mortgage debt
+        carLoan: prof.carLoan > 0 ? prof.carLoan * 50 : 0,
+        creditCard: prof.creditCard > 0 ? prof.creditCard * 20 : 0,
+        eduLoan: prof.eduLoan > 0 ? prof.eduLoan * 40 : 0,
+        bankLoan: 0
+      };
+
+      gameState.assets = [];
+
+      // Update Nav
+      document.getElementById('navLevelBadge').textContent = LEVEL_DATA[gameState.selectedLevel].name;
+      document.getElementById('navPlayerProf').textContent = prof.title;
+      document.getElementById('navGameStatus').classList.remove('hidden');
+
+      document.getElementById('landingPage').classList.add('hidden');
+      document.getElementById('gamePage').classList.remove('hidden');
+
+      updateUI();
+      initPieChart();
+      highlightTile(0);
+      updateMentorTip("¡Bienvenido al juego! Revisa tu Hoja de Balance a la derecha. Cada vez que caigas o pases por 'Día de Pago' recibirás tu Flujo de Caja Neto.");
+    }
+
+    /* ==========================================================================
+       4. FINANCIAL CALCULATIONS & UI UPDATES
+       ========================================================================== */
+    
+    function calculatePassiveIncome() {
+      return gameState.assets.reduce((sum, item) => sum + (item.cashFlow || 0), 0);
+    }
+
+    function calculateTotalIncome() {
+      return gameState.salary + calculatePassiveIncome();
+    }
+
+    function calculateTotalExpenses() {
+      const e = gameState.expenses;
+      const childTotal = e.childrenCount * e.childCostPer;
+      return e.mortgage + e.carLoan + e.creditCard + e.eduLoan + e.otherExp + e.bankInterest + childTotal;
+    }
+
+    function calculateNetCashflow() {
+      return calculateTotalIncome() - calculateTotalExpenses();
+    }
+
+    function calculateTotalLiabilities() {
+      const l = gameState.liabilities;
+      return l.mortgage + l.carLoan + l.creditCard + l.eduLoan + l.bankLoan;
+    }
+
+    function updateUI() {
+      const totalIncome = calculateTotalIncome();
+      const passiveIncome = calculatePassiveIncome();
+      const totalExpenses = calculateTotalExpenses();
+      const netCashflow = calculateNetCashflow();
+      const totalLiab = calculateTotalLiabilities();
+
+      // Freedom Ratio
+      const freedomRatio = totalExpenses > 0 ? Math.min(100, (passiveIncome / totalExpenses) * 100) : 0;
+
+      // Top & Stat Boxes
+      document.getElementById('statCashOnHand').textContent = `$${gameState.cash.toLocaleString()}`;
+      document.getElementById('statNetCashflow').textContent = `$${netCashflow.toLocaleString()}`;
+      document.getElementById('statSalary').textContent = `$${gameState.salary.toLocaleString()}`;
+      document.getElementById('statTotalIncome').textContent = `$${totalIncome.toLocaleString()}`;
+      document.getElementById('statPassiveIncome').textContent = `$${passiveIncome.toLocaleString()}`;
+      document.getElementById('statTotalExpenses').textContent = `$${totalExpenses.toLocaleString()}`;
+      document.getElementById('statTotalLiabilities').textContent = `$${totalLiab.toLocaleString()}`;
+      document.getElementById('statFreedomPctText').textContent = `${freedomRatio.toFixed(1)}%`;
+      document.getElementById('navFreedomPct').textContent = `${freedomRatio.toFixed(0)}%`;
+
+      // Center Wheel Progress
+      document.getElementById('centerRatioText').textContent = `$${passiveIncome.toLocaleString()} / $${totalExpenses.toLocaleString()}`;
+      document.getElementById('centerProgressBar').style.width = `${freedomRatio}%`;
+
+      // Render Expenses Quadrant
+      const eList = document.getElementById('expensesList');
+      eList.innerHTML = `
+        ${gameState.expenses.mortgage > 0 ? `<div class="flex justify-between"><span>Hipoteca Vivienda:</span><span class="text-red-400 font-semibold">$${gameState.expenses.mortgage}</span></div>` : ''}
+        ${gameState.expenses.carLoan > 0 ? `<div class="flex justify-between"><span>Préstamo Auto:</span><span class="text-red-400 font-semibold">$${gameState.expenses.carLoan}</span></div>` : ''}
+        ${gameState.expenses.creditCard > 0 ? `<div class="flex justify-between"><span>Tarjeta Crédito:</span><span class="text-red-400 font-semibold">$${gameState.expenses.creditCard}</span></div>` : ''}
+        ${gameState.expenses.eduLoan > 0 ? `<div class="flex justify-between"><span>Préstamo Educativo:</span><span class="text-red-400 font-semibold">$${gameState.expenses.eduLoan}</span></div>` : ''}
+        ${gameState.expenses.bankInterest > 0 ? `<div class="flex justify-between text-amber-300"><span>Interés Préstamo Banco:</span><span class="text-red-400 font-bold">$${gameState.expenses.bankInterest}</span></div>` : ''}
+        ${gameState.expenses.childrenCount > 0 ? `<div class="flex justify-between"><span>Hijos (${gameState.expenses.childrenCount}):</span><span class="text-red-400 font-semibold">$${gameState.expenses.childrenCount * gameState.expenses.childCostPer}</span></div>` : ''}
+        <div class="flex justify-between"><span>Otros Gastos Fijos:</span><span class="text-red-400 font-semibold">$${gameState.expenses.otherExp}</span></div>
+      `;
+
+      // Render Assets Quadrant
+      const aList = document.getElementById('assetsList');
+      document.getElementById('statAssetCount').textContent = `${gameState.assets.length} ítems`;
+      if (gameState.assets.length === 0) {
+        aList.innerHTML = `<div class="text-slate-500 italic text-[11px]">No posees activos. ¡Compra en casillas de Oportunidad!</div>`;
+      } else {
+        aList.innerHTML = '';
+        gameState.assets.forEach((asset, idx) => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'bg-slate-950/80 p-2 rounded-lg border border-slate-800 space-y-1';
+          
+          if (asset.type === 'stock') {
+            itemDiv.innerHTML = `
+              <div class="flex justify-between font-bold text-amber-300">
+                <span>${asset.title}</span>
+                <span>${asset.qty} acciones</span>
+              </div>
+              <div class="text-[10px] text-slate-400">Costo promedio: $${asset.costPerShare}/acción</div>
+            `;
+          } else {
+            itemDiv.innerHTML = `
+              <div class="flex justify-between font-bold text-emerald-300">
+                <span>${asset.title}</span>
+                <span class="text-emerald-400">+$${asset.cashFlow}/mes</span>
+              </div>
+              <div class="flex justify-between text-[10px] text-slate-400">
+                <span>Pago inicial: $${asset.downPayment.toLocaleString()}</span>
+                <span>Deuda: $${asset.mortgage.toLocaleString()}</span>
+              </div>
+            `;
+          }
+          aList.appendChild(itemDiv);
+        });
+      }
+
+      // Render Liabilities Quadrant
+      const lList = document.getElementById('liabilitiesList');
+      lList.innerHTML = `
+        ${gameState.liabilities.mortgage > 0 ? `<div class="flex justify-between"><span>Hipoteca Vivienda:</span><span class="text-purple-300 font-semibold">$${gameState.liabilities.mortgage.toLocaleString()}</span></div>` : ''}
+        ${gameState.liabilities.carLoan > 0 ? `<div class="flex justify-between"><span>Deuda Auto:</span><span class="text-purple-300 font-semibold">$${gameState.liabilities.carLoan.toLocaleString()}</span></div>` : ''}
+        ${gameState.liabilities.creditCard > 0 ? `<div class="flex justify-between"><span>Tarjeta Crédito:</span><span class="text-purple-300 font-semibold">$${gameState.liabilities.creditCard.toLocaleString()}</span></div>` : ''}
+        ${gameState.liabilities.eduLoan > 0 ? `<div class="flex justify-between"><span>Deuda Educación:</span><span class="text-purple-300 font-semibold">$${gameState.liabilities.eduLoan.toLocaleString()}</span></div>` : ''}
+        ${gameState.liabilities.bankLoan > 0 ? `<div class="flex justify-between font-bold text-amber-400"><span>Préstamo Bancario:</span><span class="text-amber-300">$${gameState.liabilities.bankLoan.toLocaleString()}</span></div>` : ''}
+      `;
+
+      // Update Chart
+      updatePieChart();
+
+      // Check Victory Condition
+      if (passiveIncome >= totalExpenses && totalExpenses > 0) {
+        triggerVictory();
+      }
+    }
+
+    /* ==========================================================================
+       5. GAME ENGINE & DICE BOARD LOGIC
+       ========================================================================== */
+    
+    function rollDice() {
+      const roll = Math.floor(Math.random() * 6) + 1;
+      document.getElementById('diceVisual').textContent = roll;
+
+      const oldTile = gameState.currentTile;
+      gameState.currentTile = (gameState.currentTile + roll) % 12;
+
+      // If passed Payday (crossed 0 tile boundary)
+      if (oldTile + roll >= 12) {
+        processPayday(true);
+      }
+
+      gameState.turnMonth++;
+      document.getElementById('turnCounter').textContent = `Mes ${gameState.turnMonth}`;
+      document.getElementById('currentTileNum').textContent = gameState.currentTile;
+
+      highlightTile(gameState.currentTile);
+      handleTileEvent(gameState.currentTile);
+    }
+
+    function highlightTile(tileIdx) {
+      document.querySelectorAll('.board-tile').forEach((t, i) => {
+        if (i === tileIdx) {
+          t.classList.add('active-tile');
+        } else {
+          t.classList.remove('active-tile');
+        }
+      });
+    }
+
+    function processPayday(isPassing = false) {
+      const net = calculateNetCashflow();
+      gameState.cash += net;
+      updateUI();
+
+      if (!isPassing) {
+        openModal('eventModal');
+        document.getElementById('eventCardCategory').textContent = "Día de Pago";
+        document.getElementById('eventCardCategory').className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+        document.getElementById('eventCardTitle').textContent = "¡Has cobrado tu Flujo de Caja!";
+        document.getElementById('eventCardDescription').textContent = `Has recibido $${net.toLocaleString()} netos en tu cuenta bancaria.`;
+        
+        document.getElementById('eventMetricsGrid').innerHTML = `
+          <div><div class="text-[10px] text-slate-400">Ingresos Totales:</div><div class="text-sm font-bold text-emerald-400">$${calculateTotalIncome().toLocaleString()}</div></div>
+          <div><div class="text-[10px] text-slate-400">Gastos Totales:</div><div class="text-sm font-bold text-red-400">$${calculateTotalExpenses().toLocaleString()}</div></div>
+        `;
+        document.getElementById('eventEducationalTip').textContent = "Usa el efectivo de tu Día de Pago para cancelar deudas de alto interés o para adquirir nuevos activos.";
+        
+        document.getElementById('eventActions').innerHTML = `
+          <button onclick="closeModal('eventModal')" class="px-5 py-2 text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl">Cobrar e Continuar</button>
+        `;
+      }
+    }
+
+    function handleTileEvent(tileIdx) {
+      switch(tileIdx) {
+        case 0:
+        case 5:
+        case 9:
+          processPayday(false);
+          break;
+        case 1:
+        case 3:
+          triggerOpportunityModal('small');
+          break;
+        case 7:
+          triggerOpportunityModal('big');
+          break;
+        case 2:
+        case 6:
+          triggerDoodadModal();
+          break;
+        case 4:
+        case 8:
+          triggerMarketModal();
+          break;
+        case 10:
+          triggerBabyEvent();
+          break;
+        case 11:
+          triggerDownsizedEvent();
+          break;
+      }
+    }
+
+    /* ==========================================================================
+       6. TILE EVENT MODALS (DECISION ENGINE)
+       ========================================================================== */
+    
+    function triggerOpportunityModal(type) {
+      const deck = type === 'small' ? DECK_SMALL_DEALS : DECK_BIG_DEALS;
+      const card = deck[Math.floor(Math.random() * deck.length)];
+
+      openModal('eventModal');
+      document.getElementById('eventCardCategory').textContent = type === 'small' ? "Oportunidad Pequeña" : "Gran Negocio";
+      document.getElementById('eventCardCategory').className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30";
+      document.getElementById('eventCardTitle').textContent = card.title;
+      document.getElementById('eventCardDescription').textContent = card.description;
+      document.getElementById('eventEducationalTip').textContent = card.tip;
+
+      const grid = document.getElementById('eventMetricsGrid');
+      
+      if (card.type === 'stock') {
+        grid.innerHTML = `
+          <div><div class="text-[10px] text-slate-400">Precio por Acción:</div><div class="text-sm font-bold text-amber-400">$${card.costPerShare}</div></div>
+          <div><div class="text-[10px] text-slate-400">Tu Efectivo:</div><div class="text-sm font-bold text-emerald-400">$${gameState.cash.toLocaleString()}</div></div>
+        `;
+
+        document.getElementById('eventActions').innerHTML = `
+          <button onclick="closeModal('eventModal')" class="px-4 py-2 text-xs font-semibold bg-slate-800 text-slate-300 rounded-xl">Pasar</button>
+          <button onclick="buyStockPrompt(${card.costPerShare}, '${card.title}')" class="px-5 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl">Comprar Acciones</button>
+        `;
+      } else {
+        grid.innerHTML = `
+          <div><div class="text-[10px] text-slate-400">Precio Total:</div><div class="text-sm font-bold text-white">$${card.cost.toLocaleString()}</div></div>
+          <div><div class="text-[10px] text-slate-400">Pago Inicial (Enganche):</div><div class="text-sm font-bold text-amber-400">$${card.downPayment.toLocaleString()}</div></div>
+          <div><div class="text-[10px] text-slate-400">Flujo de Caja Mensual:</div><div class="text-sm font-bold text-emerald-400">+$${card.cashFlow}/mes</div></div>
+          <div><div class="text-[10px] text-slate-400">Hipoteca/Deuda Asumida:</div><div class="text-sm font-bold text-purple-400">$${card.mortgage.toLocaleString()}</div></div>
+        `;
+
+        const canAfford = gameState.cash >= card.downPayment;
+
+        document.getElementById('eventActions').innerHTML = `
+          <button onclick="closeModal('eventModal')" class="px-4 py-2 text-xs font-semibold bg-slate-800 text-slate-300 rounded-xl">Pasar</button>
+          ${canAfford ? 
+            `<button onclick="buyRealEstate(${JSON.stringify(card).replace(/"/g, '&quot;')})" class="px-5 py-2 text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl shadow-lg">Comprar Activo</button>` :
+            `<button onclick="openModal('loanModal')" class="px-5 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl">Pedir Préstamo</button>`
+          }
+        `;
+      }
+    }
+
+    function buyRealEstate(card) {
+      if (gameState.cash < card.downPayment) return;
+
+      gameState.cash -= card.downPayment;
+      gameState.assets.push({
+        id: Date.now(),
+        title: card.title,
+        type: 'real_estate',
+        cost: card.cost,
+        downPayment: card.downPayment,
+        cashFlow: card.cashFlow,
+        mortgage: card.mortgage
+      });
+
+      updateUI();
+      closeModal('eventModal');
+      updateMentorTip(`¡Excelente adquisición! Compraste '${card.title}'. Ahora recibes +$${card.cashFlow}/mes en ingresos pasivos.`);
+    }
+
+    function buyStockPrompt(costPerShare, title) {
+      const maxShares = Math.floor(gameState.cash / costPerShare);
+      if (maxShares <= 0) {
+        updateMentorTip("No tienes suficiente efectivo para comprar acciones.");
+        closeModal('eventModal');
+        return;
+      }
+
+      // Automatically buy 50% of affordable shares or min 10
+      const qty = Math.max(10, Math.floor(maxShares / 2));
+      const totalCost = qty * costPerShare;
+
+      gameState.cash -= totalCost;
+      
+      const existing = gameState.assets.find(a => a.title === title);
+      if (existing) {
+        existing.qty += qty;
+      } else {
+        gameState.assets.push({
+          id: Date.now(),
+          title: title,
+          type: 'stock',
+          costPerShare: costPerShare,
+          qty: qty,
+          cashFlow: 0
+        });
+      }
+
+      updateUI();
+      closeModal('eventModal');
+      updateMentorTip(`Compraste ${qty} acciones de ${title} por $${totalCost.toLocaleString()}. Espera a un evento de Mercado para venderlas cara.`);
+    }
+
+    function triggerDoodadModal() {
+      const card = DECK_DOODADS[Math.floor(Math.random() * DECK_DOODADS.length)];
+
+      openModal('eventModal');
+      document.getElementById('eventCardCategory').textContent = "Capricho (Pasivo)";
+      document.getElementById('eventCardCategory').className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-red-500/20 text-red-400 border border-red-500/30";
+      document.getElementById('eventCardTitle').textContent = card.title;
+      document.getElementById('eventCardDescription').textContent = card.description;
+      
+      document.getElementById('eventMetricsGrid').innerHTML = `
+        <div><div class="text-[10px] text-slate-400">Costo Obligatorio:</div><div class="text-sm font-bold text-red-400">$${card.cost.toLocaleString()}</div></div>
+        <div><div class="text-[10px] text-slate-400">Tu Efectivo:</div><div class="text-sm font-bold text-emerald-400">$${gameState.cash.toLocaleString()}</div></div>
+      `;
+
+      document.getElementById('eventEducationalTip').textContent = "Los Caprichos son gastos innecesarios que sacan dinero de tu bolsillo sin aportar valor financiero.";
+
+      document.getElementById('eventActions').innerHTML = `
+        <button onclick="payDoodad(${card.cost})" class="px-5 py-2 text-xs font-bold bg-red-500 hover:bg-red-400 text-white rounded-xl">Pagar Capricho</button>
+      `;
+    }
+
+    function payDoodad(cost) {
+      if (gameState.cash >= cost) {
+        gameState.cash -= cost;
+      } else {
+        // Must take bank loan
+        const neededLoan = Math.ceil((cost - gameState.cash) / 1000) * 1000;
+        takeBankLoan(neededLoan);
+        gameState.cash -= cost;
+      }
+      updateUI();
+      closeModal('eventModal');
+    }
+
+    function triggerMarketModal() {
+      const card = DECK_MARKET[Math.floor(Math.random() * DECK_MARKET.length)];
+
+      openModal('eventModal');
+      document.getElementById('eventCardCategory').textContent = "Evento de Mercado";
+      document.getElementById('eventCardCategory').className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-blue-500/20 text-blue-400 border border-blue-500/30";
+      document.getElementById('eventCardTitle').textContent = card.title;
+      document.getElementById('eventCardDescription').textContent = card.description;
+      document.getElementById('eventEducationalTip').textContent = card.tip;
+
+      const grid = document.getElementById('eventMetricsGrid');
+
+      if (card.type === 'buy_house') {
+        const houses = gameState.assets.filter(a => a.type === 'real_estate');
+        
+        grid.innerHTML = `
+          <div><div class="text-[10px] text-slate-400">Oferta del Mercado:</div><div class="text-sm font-bold text-blue-400">$${card.offerPrice.toLocaleString()}</div></div>
+          <div><div class="text-[10px] text-slate-400">Tus Propiedades:</div><div class="text-sm font-bold text-white">${houses.length} casas</div></div>
+        `;
+
+        document.getElementById('eventActions').innerHTML = `
+          <button onclick="closeModal('eventModal')" class="px-4 py-2 text-xs font-semibold bg-slate-800 text-slate-300 rounded-xl">Cerrar</button>
+          ${houses.length > 0 ? `<button onclick="sellHouse(${houses[0].id}, ${card.offerPrice})" class="px-5 py-2 text-xs font-bold bg-emerald-500 text-slate-950 rounded-xl">Vender 1 Propiedad</button>` : ''}
+        `;
+      } else if (card.type === 'stock_surge') {
+        const stocks = gameState.assets.filter(a => a.type === 'stock');
+        const totalShares = stocks.reduce((sum, s) => sum + s.qty, 0);
+
+        grid.innerHTML = `
+          <div><div class="text-[10px] text-slate-400">Nuevo Precio Acción:</div><div class="text-sm font-bold text-emerald-400">$${card.price}</div></div>
+          <div><div class="text-[10px] text-slate-400">Tus Acciones:</div><div class="text-sm font-bold text-amber-400">${totalShares} unidades</div></div>
+        `;
+
+        document.getElementById('eventActions').innerHTML = `
+          <button onclick="closeModal('eventModal')" class="px-4 py-2 text-xs font-semibold bg-slate-800 text-slate-300 rounded-xl">Guardar Acciones</button>
+          ${totalShares > 0 ? `<button onclick="sellAllStocks(${card.price})" class="px-5 py-2 text-xs font-bold bg-emerald-500 text-slate-950 rounded-xl">Vender Todas Acciones</button>` : ''}
+        `;
+      }
+    }
+
+    function sellHouse(houseId, offerPrice) {
+      const idx = gameState.assets.findIndex(a => a.id === houseId);
+      if (idx !== -1) {
+        const house = gameState.assets[idx];
+        const profit = offerPrice - house.mortgage;
+        gameState.cash += profit;
+        gameState.assets.splice(idx, 1);
+
+        updateUI();
+        closeModal('eventModal');
+        updateMentorTip(`¡Venta realizada! Cancelaste la hipoteca de $${house.mortgage.toLocaleString()} y recibiste $${profit.toLocaleString()} líquidos.`);
+      }
+    }
+
+    function sellAllStocks(marketPrice) {
+      let totalProceeds = 0;
+      gameState.assets = gameState.assets.filter(a => {
+        if (a.type === 'stock') {
+          totalProceeds += a.qty * marketPrice;
+          return false;
+        }
+        return true;
+      });
+
+      gameState.cash += totalProceeds;
+      updateUI();
+      closeModal('eventModal');
+      updateMentorTip(`¡Excelente oportunidad tomada! Vendiste tus acciones y obtuviste $${totalProceeds.toLocaleString()} en efectivo.`);
+    }
+
+    function triggerBabyEvent() {
+      if (gameState.expenses.childrenCount < 3) {
+        gameState.expenses.childrenCount++;
+        updateUI();
+      }
+
+      openModal('eventModal');
+      document.getElementById('eventCardCategory').textContent = "Aumento de Gastos";
+      document.getElementById('eventCardCategory').className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-pink-500/20 text-pink-400 border border-pink-500/30";
+      document.getElementById('eventCardTitle').textContent = "¡Nuevo Hijo o Responsabilidad!";
+      document.getElementById('eventCardDescription').textContent = `Tus gastos mensuales permanentes han aumentado en +$${gameState.expenses.childCostPer}/mes.`;
+      
+      document.getElementById('eventMetricsGrid').innerHTML = `
+        <div><div class="text-[10px] text-slate-400">Total Hijos:</div><div class="text-sm font-bold text-pink-400">${gameState.expenses.childrenCount}</div></div>
+        <div><div class="text-[10px] text-slate-400">Costo Adicional:</div><div class="text-sm font-bold text-red-400">+$${gameState.expenses.childCostPer}/mes</div></div>
+      `;
+
+      document.getElementById('eventEducationalTip').textContent = "Cada hijo incrementa el umbral de Gastos Totales necesario para alcanzar la Libertad Financiera.";
+
+      document.getElementById('eventActions').innerHTML = `
+        <button onclick="closeModal('eventModal')" class="px-5 py-2 text-xs font-bold bg-pink-500 text-slate-950 rounded-xl">Entendido</button>
+      `;
+    }
+
+    function triggerDownsizedEvent() {
+      const penalty = calculateTotalExpenses();
+      gameState.cash = Math.max(0, gameState.cash - penalty);
+
+      openModal('eventModal');
+      document.getElementById('eventCardCategory').textContent = "Imprevisto Laboral";
+      document.getElementById('eventCardCategory').className = "px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-slate-700 text-slate-200";
+      document.getElementById('eventCardTitle').textContent = "Paro Laboral / Reducción";
+      document.getElementById('eventCardDescription').textContent = `Has tenido que pagar un mes entero de tus gastos fijos ($${penalty.toLocaleString()}) sin trabajar.`;
+      
+      document.getElementById('eventMetricsGrid').innerHTML = `
+        <div><div class="text-[10px] text-slate-400">Gasto Pagado:</div><div class="text-sm font-bold text-red-400">$${penalty.toLocaleString()}</div></div>
+        <div><div class="text-[10px] text-slate-400">Efectivo Restante:</div><div class="text-sm font-bold text-emerald-400">$${gameState.cash.toLocaleString()}</div></div>
+      `;
+
+      document.getElementById('eventEducationalTip').textContent = "Un fondo de emergencia de 3 a 6 meses de gastos te protege de este tipo de eventos imprevistos.";
+
+      document.getElementById('eventActions').innerHTML = `
+        <button onclick="closeModal('eventModal')" class="px-5 py-2 text-xs font-bold bg-slate-700 text-white rounded-xl">Continuar</button>
+      `;
+    }
+
+    /* ==========================================================================
+       7. BANKING LOGIC (LOANS & DEBT PAYOFF)
+       ========================================================================== */
+    
+    function updateLoanCalc() {
+      const amt = parseInt(document.getElementById('loanRange').value);
+      document.getElementById('loanAmountText').textContent = `$${amt.toLocaleString()}`;
+      document.getElementById('loanExpenseText').textContent = `+$${(amt * 0.1).toLocaleString()}/mes`;
+    }
+
+    function confirmTakeLoan() {
+      const amt = parseInt(document.getElementById('loanRange').value);
+      takeBankLoan(amt);
+      closeModal('loanModal');
+    }
+
+    function takeBankLoan(amt) {
+      gameState.cash += amt;
+      gameState.liabilities.bankLoan += amt;
+      gameState.expenses.bankInterest += amt * 0.1; // 10% monthly bank interest
+      updateUI();
+      updateMentorTip(`Solicitaste $${amt.toLocaleString()} al banco. Tu gasto mensual aumentó en +$${(amt * 0.1).toLocaleString()}/mes.`);
+    }
+
+    function openPayDebtModal() {
+      openModal('payDebtModal');
+      const listDiv = document.getElementById('debtsPayList');
+      listDiv.innerHTML = '';
+
+      const debts = [
+        { key: 'creditCard', name: 'Tarjeta de Crédito', total: gameState.liabilities.creditCard, exp: gameState.expenses.creditCard },
+        { key: 'carLoan', name: 'Préstamo Auto', total: gameState.liabilities.carLoan, exp: gameState.expenses.carLoan },
+        { key: 'eduLoan', name: 'Préstamo Educativo', total: gameState.liabilities.eduLoan, exp: gameState.expenses.eduLoan },
+        { key: 'bankLoan', name: 'Préstamo Bancario', total: gameState.liabilities.bankLoan, exp: gameState.expenses.bankInterest }
+      ];
+
+      debts.filter(d => d.total > 0).forEach(d => {
+        const canPay = gameState.cash >= d.total;
+        const row = document.createElement('div');
+        row.className = 'bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex items-center justify-between text-xs';
+        row.innerHTML = `
+          <div>
+            <div class="font-bold text-white">${d.name}</div>
+            <div class="text-[10px] text-slate-400">Total Deuda: <strong class="text-purple-300">$${d.total.toLocaleString()}</strong> (Elimina $${d.exp}/mes)</div>
+          </div>
+          <button onclick="payOffSpecificDebt('${d.key}')" ${canPay ? '' : 'disabled'} class="px-3 py-1.5 rounded-lg text-xs font-bold ${canPay ? 'bg-amber-500 hover:bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}">
+            Liquidar
+          </button>
+        `;
+        listDiv.appendChild(row);
+      });
+
+      if (listDiv.children.length === 0) {
+        listDiv.innerHTML = `<div class="text-slate-500 text-center text-xs py-4">¡Felicidades! No tienes pasivos personales pendientes.</div>`;
+      }
+    }
+
+    function payOffSpecificDebt(key) {
+      let cost = gameState.liabilities[key];
+      if (gameState.cash < cost) return;
+
+      gameState.cash -= cost;
+      gameState.liabilities[key] = 0;
+
+      if (key === 'creditCard') gameState.expenses.creditCard = 0;
+      if (key === 'carLoan') gameState.expenses.carLoan = 0;
+      if (key === 'eduLoan') gameState.expenses.eduLoan = 0;
+      if (key === 'bankLoan') {
+        gameState.expenses.bankInterest = 0;
+      }
+
+      updateUI();
+      openPayDebtModal(); // Refresh modal
+      updateMentorTip(`¡Mano firme! Liquidaste la deuda de ${key}. Tu flujo de caja mensual acaba de liberarse.`);
+    }
+
+    /* ==========================================================================
+       8. CHART.JS VISUALIZATIONS & UTILS
+       ========================================================================== */
+    
+    function initPieChart() {
+      const ctx = document.getElementById('financialPieChart').getContext('2d');
+      if (gameState.chartInstance) gameState.chartInstance.destroy();
+
+      gameState.chartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Salario', 'Ingresos Pasivos', 'Gastos Totales'],
+          datasets: [{
+            data: [gameState.salary, calculatePassiveIncome(), calculateTotalExpenses()],
+            backgroundColor: ['#3b82f6', '#10b981', '#ef4444'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#94a3b8', font: { size: 10 } }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    }
+
+    function updatePieChart() {
+      if (!gameState.chartInstance) return;
+      gameState.chartInstance.data.datasets[0].data = [
+        gameState.salary,
+        calculatePassiveIncome(),
+        calculateTotalExpenses()
+      ];
+      gameState.chartInstance.update();
+    }
+
+    function triggerVictory() {
+      document.getElementById('victoryPassive').textContent = `$${calculatePassiveIncome().toLocaleString()}`;
+      document.getElementById('victoryExpenses').textContent = `$${calculateTotalExpenses().toLocaleString()}`;
+      document.getElementById('victoryTurns').textContent = `${gameState.turnMonth} meses`;
+      openModal('victoryModal');
+    }
+
+    function updateMentorTip(msg) {
+      document.getElementById('mentorMessage').textContent = msg;
+    }
+
+    function dismissMentorBanner() {
+      document.getElementById('mentorBanner').classList.add('hidden');
+    }
+
+    function openModal(id) {
+      if (id === 'payDebtModal') openPayDebtModal();
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
